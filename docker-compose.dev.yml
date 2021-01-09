@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  web:
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    environment:
+      - DJANGO_SETTINGS_MODULE=app.settings.dev
+      - ENV=DEV
+    env_file:
+      - .env
+
+  db:
+    env_file:
+      - .env

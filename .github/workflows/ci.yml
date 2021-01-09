@@ -1,0 +1,20 @@
+name: testing
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout the code
+        uses: actions/checkout@v2
+      - name: build and run the tests
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml run web python manage.py test
+        env:
+          DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}

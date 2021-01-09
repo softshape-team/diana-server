@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    volumes:
+      - staticfiles:/src/app/staticfiles
+      - mediafiles:/src/app/mediafiles
+    depends_on:
+      - web
+
+  web:
+    command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - staticfiles:/src/app/staticfiles
+      - mediafiles:/src/app/mediafiles
+    environment:
+      - DJANGO_SETTINGS_MODULE=app.settings.prod
+      - ENV=PROD
+    env_file:
+      - .env
+
+  db:
+    env_file:
+      - .env
+
+volumes:
+  staticfiles:
+  mediafiles:
