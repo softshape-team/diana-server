@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 django = "*"
 gunicorn = "*"
+black = "==20.8b1"
 
 [dev-packages]
 pylint-django = "*"
