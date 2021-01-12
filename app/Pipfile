@@ -7,6 +7,10 @@ name = "pypi"
 django = "*"
 gunicorn = "*"
 black = "==20.8b1"
+djangorestframework = "*"
+dj-rest-auth = "*"
+djangorestframework-simplejwt = "*"
+drf-spectacular = "*"
 
 [dev-packages]
 pylint-django = "*"

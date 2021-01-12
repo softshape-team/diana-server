@@ -14,7 +14,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # 3rd party apps
+    "rest_framework",
+    "rest_framework.authtoken",
+    "dj_rest_auth",
+    # Created apps
     "accounts.apps.AccountsConfig",
+    # 3rd party apps
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -91,6 +98,21 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/mediafiles/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
 
-
 # Authentication
 AUTH_USER_MODEL = "accounts.User"
+
+# REST Framework
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 50,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
+
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = "jwt-auth"

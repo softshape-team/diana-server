@@ -33,5 +33,17 @@ class User(AbstractUser):
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
 
+    def clean(self, *args, **kwargs):
+        self.email = self.email.lower()
+        super().clean(*args, **kwargs)
+
     def __str__(self):
         return f"{self.username}"
+
+    class Meta:
+        ordering = ("username",)
+
+        indexes = (
+            models.Index(fields=("username",)),
+            models.Index(fields=("email",)),
+        )
