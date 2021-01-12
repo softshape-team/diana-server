@@ -41,7 +41,13 @@ class UserAdmin(BaseUserAdmin):
         (
             "Dates",
             {
-                "fields": ("date_joined", "last_login"),
+                "fields": ("birthdate", "date_joined", "last_login"),
+            },
+        ),
+        (
+            "Other",
+            {
+                "fields": ("daily_progress",),
             },
         ),
     )

@@ -8,8 +8,10 @@ from drf_spectacular.views import (
 
 
 urlpatterns = [
-    # Admin
+    # Admin App
     path("admin/", admin.site.urls),
+    # Accounts
+    path("accounts/", include("accounts.urls")),
     # API Docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
@@ -22,6 +24,4 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
-    # Accounts
-    path("accounts/", include("accounts.urls")),
 ]

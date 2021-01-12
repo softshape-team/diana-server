@@ -5,6 +5,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db.models.fields import BooleanField
 
+from .validators import BothIncludedRangeValidator
+
 
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -22,6 +24,9 @@ class User(AbstractUser):
     password = models.CharField(max_length=128)
 
     birthdate = models.DateField(null=True, blank=True)
+    daily_progress = models.FloatField(
+        default=0, validators=[BothIncludedRangeValidator(0, 100)]
+    )
 
     is_active = BooleanField(default=True)
     is_staff = BooleanField(default=False)
@@ -46,4 +51,12 @@ class User(AbstractUser):
         indexes = (
             models.Index(fields=("username",)),
             models.Index(fields=("email",)),
+        )
+
+        constraints = (
+            models.CheckConstraint(
+                name="valid_daily_progress",
+                check=models.Q(daily_progress__gte=0)
+                & models.Q(daily_progress__lte=100),
+            ),
         )
