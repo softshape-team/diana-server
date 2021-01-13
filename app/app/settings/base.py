@@ -121,8 +121,13 @@ JWT_AUTH_COOKIE = "my-app-auth"
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=os.getenv("ACCESS_TOKEN_LIFETIME_MINUTES", 5),
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=os.getenv("REFRESH_TOKEN_LIFETIME_DAYS", 1),
+        hours=os.getenv("REFRESH_TOKEN_LIFETIME_HOURS", 0),
+    ),
     "ROTATE_REFRESH_TOKENS": True,
 }
 
