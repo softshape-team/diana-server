@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "dj_rest_auth",
     # Created apps
+    "core.apps.CoreConfig",
     "accounts.apps.AccountsConfig",
     # 3rd party apps
     "drf_spectacular",

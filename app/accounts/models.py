@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db.models.fields import BooleanField
 
-from .validators import BothIncludedRangeValidator
+from core.validators import BothIncludedRangeValidator
 
 
 class User(AbstractUser):
