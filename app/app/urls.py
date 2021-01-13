@@ -11,7 +11,6 @@ urlpatterns = [
     # Admin App
     path("admin/", admin.site.urls),
     # Core app
-    path("", include("core.urls")),
     # Accounts app
     path("accounts/", include("accounts.urls")),
     # API Docs
