@@ -21,6 +21,12 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_email(self, value: str):
         return value.lower()
 
+    def validate(self, data):
+        if self.context["request"].method in ("PUT", "PATCH") and "password" in data:
+            raise serializers.ValidationError("You can not set a new password.")
+
+        return data
+
     class Meta:
         model = User
         fields = (
