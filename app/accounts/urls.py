@@ -1,4 +1,7 @@
-from django.urls import path, include
+from django.urls import path
+from django.contrib.auth.views import (
+    PasswordResetConfirmView as MainPasswordResetConfirmView,
+)
 
 from dj_rest_auth.views import (
     LoginView,
@@ -34,4 +37,9 @@ urlpatterns = [
     ),
     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path(
+        "password/reset/confirm/<uidb64>/<token>/",
+        MainPasswordResetConfirmView.as_view(),
+        name="password_reset_confirm",
+    ),
 ]
