@@ -4,6 +4,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 
+from django_better_admin_arrayfield.models.fields import ArrayField
+
 from .validators import BothIncludedRangeValidator
 
 
@@ -15,6 +17,16 @@ class Base(models.Model):
 
     class Meta:
         abstract = True
+
+
+class Weekday(models.IntegerChoices):
+    MONDAY = 0
+    TUESDAY = 1
+    WEDNESDAY = 2
+    THURESDAY = 3
+    FRIDAY = 4
+    SATURDAY = 5
+    SANDAY = 6
 
 
 class Priority(models.IntegerChoices):
@@ -109,4 +121,26 @@ class TasksTags(Base):
         indexes = [
             models.Index(fields=["task"]),
             models.Index(fields=["tag"]),
+        ]
+
+
+class Habit(Base):
+    user = models.ForeignKey(User, related_name="habits", on_delete=models.CASCADE)
+    name = models.CharField(max_length=24)
+    days = ArrayField(
+        models.IntegerField(choices=Weekday.choices),
+        blank=True,
+        null=True,
+        size=7,
+    )
+    time = models.TimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        ordering = ["user"]
+
+        indexes = [
+            models.Index(fields=["user"]),
         ]

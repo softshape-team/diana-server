@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "dj_rest_auth",
+    "django_better_admin_arrayfield",
     # Created apps
     "core.apps.CoreConfig",
     "accounts.apps.AccountsConfig",

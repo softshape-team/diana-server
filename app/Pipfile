@@ -12,6 +12,7 @@ dj-rest-auth = "*"
 djangorestframework-simplejwt = "*"
 drf-spectacular = "*"
 psycopg2-binary = "*"
+django-better-admin-arrayfield = "*"
 
 [dev-packages]
 pylint-django = "*"
