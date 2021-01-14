@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 
-from .models import Task, Tag, Habit
+from .models import Task, Tag, Habit, HabitLog
 
 
 class TasksTagsAdmin(admin.TabularInline):
@@ -21,4 +21,9 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Habit)
 class HabitAdmin(admin.ModelAdmin, DynamicArrayMixin):
+    pass
+
+
+@admin.register(HabitLog)
+class HabitLogAdmin(admin.ModelAdmin):
     pass

@@ -144,3 +144,16 @@ class Habit(Base):
         indexes = [
             models.Index(fields=["user"]),
         ]
+
+
+class HabitLog(Base):
+    habit = models.ForeignKey(Habit, related_name="history", on_delete=models.CASCADE)
+    done_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.habit} @ {self.done_at}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["habit"]),
+        ]
