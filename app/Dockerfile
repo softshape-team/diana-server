@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Install dependencies
-RUN pip install --upgrade pip && pip install psycopg2-binary && pip install pipenv
+RUN pip install --upgrade pip && pip install pipenv
 COPY Pipfile Pipfile.lock ./
 RUN pipenv install --system --deploy --ignore-pipfile
 
