@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 
 from .validators import BothIncludedRangeValidator
@@ -23,10 +24,37 @@ class Priority(models.IntegerChoices):
     P3 = 3
 
 
+class Color(models.IntegerChoices):
+    GREY = 0
+    RED = 1
+    GREEN = 2
+    BLUE = 3
+    YELLOW = 4
+    PINK = 5
+    ORANGE = 6
+
+
+class Tag(Base):
+    user = models.ForeignKey(User, related_name="tags", on_delete=models.CASCADE)
+    name = models.CharField(max_length=16)
+    color = models.IntegerField(choices=Color.choices, default=0)
+
+    def __str__(self):
+        return f"{self.name}"
+
+    class Meta:
+        ordering = ["user", "name"]
+
+        indexes = [
+            models.Index(fields=["user"]),
+        ]
+
+
 class Task(Base):
     user = models.ForeignKey(User, related_name="tasks", on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
     note = models.TextField()
+    tags = models.ManyToManyField(Tag, related_name="tasks", through="TasksTags")
     deadline = models.DateTimeField(null=True, blank=True)
     done_at = models.DateTimeField(null=True, blank=True)
     priority = models.IntegerField(
@@ -60,3 +88,25 @@ class Checklist(Base):
 
     def __str__(self):
         return f"{self.name}"
+
+
+class TasksTags(Base):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.SET_DEFAULT, default=0)
+
+    def __str__(self):
+        return f"{self.task} - {self.tag}"
+
+    def clean(self):
+        if self.task.user != self.tag.user:
+            raise ValidationError(
+                "Tasks can only be linked to tags from the same user."
+            )
+
+    class Meta:
+        ordering = ["tag"]
+
+        indexes = [
+            models.Index(fields=["task"]),
+            models.Index(fields=["tag"]),
+        ]
