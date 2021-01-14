@@ -3,6 +3,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 
+from rest_framework.authtoken.models import TokenProxy
+
 from .forms import UserCreationForm, UserChangeForm
 
 
@@ -10,6 +12,7 @@ User = get_user_model()
 
 
 admin.site.unregister(Group)
+admin.site.unregister(TokenProxy)
 
 
 @admin.register(User)
