@@ -127,7 +127,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(
         days=os.getenv("REFRESH_TOKEN_LIFETIME_DAYS", 1),
         hours=os.getenv("REFRESH_TOKEN_LIFETIME_HOURS", 0),
-        minutes=os.getenv("REFRESH_TOKEN_LIFETIME_MINUTES"),
+        minutes=os.getenv("REFRESH_TOKEN_LIFETIME_MINUTES", 0),
     ),
     "ROTATE_REFRESH_TOKENS": True,
 }
