@@ -1,12 +1,17 @@
 # Diana - A Task Assistant
 
-**Diana** aims to help you live a better day by tracking your tasks and helps you have better habits
+**Diana** aims to help you live a better day by tracking your tasks and helps you have better habits.
+
+## Database
+
+This is the way that our database is designed
+
+![1c265ef0-f670-47a5-9035-d1bd864ce4ee](https://user-images.githubusercontent.com/57685540/104775608-a678c200-5789-11eb-9cbe-aa5d47291f2e.jpeg)
 
 ## Contribution
 
-Contribution are **welcomed**
-We are making a mobile app with flutter please take a look at the [repo](https://github.com/softshape-team/diana-mobile)
+If you have an idea to improve **Diana** and makes life easier, don't hesitate to do so!
 
-### Database
+## Other links
 
-![Diana DB](./Diana-db.png)
+- [Diana mobile app](https://github.com/softshape-team/diana-mobile)
