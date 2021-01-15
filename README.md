@@ -5,8 +5,8 @@
 ## Contribution
 
 Contribution are **welcomed**
-We are making a mobile app with flutter please take a look at the ![repo](https://github.com/softshape-team/diana-mobile)
+We are making a mobile app with flutter please take a look at the [repo](https://github.com/softshape-team/diana-mobile)
 
 ### Database
 
-![This is the image](../diana-server/Diana-db.png)
+![Diana DB](./Diana-db.png)
