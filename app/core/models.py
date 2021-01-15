@@ -67,6 +67,7 @@ class Task(Base):
     name = models.CharField(max_length=256)
     note = models.TextField()
     tags = models.ManyToManyField(Tag, related_name="tasks", through="TasksTags")
+    reminder = models.DateTimeField(null=True, blank=True)
     deadline = models.DateTimeField(null=True, blank=True)
     done_at = models.DateTimeField(null=True, blank=True)
     priority = models.IntegerField(
