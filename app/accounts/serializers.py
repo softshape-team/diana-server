@@ -8,6 +8,7 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # TODO: PUT request does not work -- split the serializer into 2 ?
     password = serializers.CharField(
         write_only=True,
         min_length=8,
