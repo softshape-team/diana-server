@@ -8,4 +8,4 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Task
         fields = "__all__"
-        read_only_fields = ("user", "done_at")
+        read_only_fields = ("user", "tags", "done_at")
