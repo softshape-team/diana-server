@@ -4,7 +4,7 @@ from django.utils import timezone
 
 from rest_framework.test import APIClient
 
-from .models import Task
+from .models import Task, Subtask
 from .functions import rvs
 
 User = get_user_model()
@@ -36,6 +36,24 @@ class TasksTest(TestCase):
     def setUp(self) -> None:
         self.users, self.clients = users_clients()
 
+        self.tasks = {
+            "sami": [
+                Task.objects.create(user=self.users["sami"], name="Foo"),
+            ],
+            "rami": [
+                Task.objects.create(user=self.users["rami"], name="Bar"),
+            ],
+        }
+
+        self.subtasks = {
+            "sami": [
+                Subtask.objects.create(task=self.tasks["sami"][0], name="Foo"),
+            ],
+            "rami": [
+                Subtask.objects.create(task=self.tasks["rami"][0], name="Foo"),
+            ],
+        }
+
     def test_task_list(self):
         """
         A user can get its own tasks only.
@@ -52,7 +70,7 @@ class TasksTest(TestCase):
 
         res = sclient.get(rvs("task-list"))
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(len(res.data["results"]), 0)
+        self.assertEqual(len(res.data["results"]), 1)
 
         ########## POST new ####################
         res = client.post(rvs("task-list"))
@@ -70,7 +88,7 @@ class TasksTest(TestCase):
         ########## GET all again ####################
         res = sclient.get(rvs("task-list"))
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(len(res.data["results"]), 1)
+        self.assertEqual(len(res.data["results"]), 2)
 
     def test_task_detail(self):
         """
@@ -80,35 +98,123 @@ class TasksTest(TestCase):
 
         # Gettings ready
         client, sclient, rclient = self.clients()
-        s0 = Task.objects.create(user=self.users["sami"], name="Foo")
-        r0 = Task.objects.create(user=self.users["rami"], name="Bar")
+        st0 = self.tasks["sami"][0]
 
         ########## GET a task ####################
-        res = client.get(rvs("task-detail", args=[s0.pk]))
+        res = client.get(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 401)
 
-        res = sclient.get(rvs("task-detail", args=[s0.pk]))
+        res = sclient.get(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 200)
 
-        res = rclient.get(rvs("task-detail", args=[s0.pk]))
+        res = rclient.get(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 404)
 
         ########## PUT a task ####################
-        res = client.put(rvs("task-detail", args=[s0.pk]))
+        res = client.put(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 401)
 
-        res = sclient.put(rvs("task-detail", args=[s0.pk]), {"name": "New name"})
+        res = sclient.put(rvs("task-detail", args=[st0.pk]), {"name": "New name"})
         self.assertEqual(res.status_code, 200)
 
-        res = rclient.put(rvs("task-detail", args=[s0.pk]))
+        res = rclient.put(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 404)
 
         ########## DELETE a task ####################
-        res = client.delete(rvs("task-detail", args=[s0.pk]))
+        res = client.delete(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 401)
 
-        res = sclient.delete(rvs("task-detail", args=[s0.pk]))
+        res = sclient.delete(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 204)
 
-        res = rclient.delete(rvs("task-detail", args=[s0.pk]))
+        res = rclient.delete(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 404)
+
+    def test_subtask_list(self):
+        """
+        Get task's checklists.
+        Add a new subtask.
+        Authed user required.
+        """
+
+        # Gettings ready
+        client, sclient, rclient = self.clients()
+        st0 = self.tasks["sami"][0]
+
+        ########## GET a checklist ####################
+        res = client.get(rvs("subtask-list"))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.get(rvs("subtask-list", params={"task": st0.pk}))
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.data["results"]), 1)
+
+        res = rclient.get(rvs("subtask-list", params={"task": st0.pk}))
+        self.assertEqual(res.status_code, 404)
+
+        ########## POST a subtask ####################
+        res = client.post(rvs("subtask-list"))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.post(rvs("subtask-list"), {"task": st0.pk, "name": "Foo"})
+        self.assertEqual(res.status_code, 200)
+
+        res = rclient.post(rvs("subtask-list", {"task": st0.pk, "name": "Bar"}))
+        self.assertEqual(res.status_code, 404)
+
+        ########## GET all again ####################
+        res = sclient.get(rvs("subtask-list", params={"task": st0.pk}))
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.data["results"]), 2)
+
+    def test_subtask_detail(self):
+        """
+        Get, Update, Delete a task's subtasks.
+        Authed user required.
+        """
+
+        # Gettings ready
+        client, sclient, rclient = self.clients()
+        sst0 = self.subtasks["sami"][0]
+
+        ########## GET a subtask ####################
+        res = client.get(rvs("subtask-detail", args=[sst0.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.get(rvs("subtask-detail", args=[sst0.pk]))
+        self.assertEqual(res.status_code, 200)
+
+        res = rclient.get(rvs("subtask-detail", args=[sst0.pk]))
+        self.assertEqual(res.status_code, 404)
+
+        ########## PUT a subtask ####################
+        res = client.put(rvs("subtask-detail", args=[sst0.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.put(
+            rvs("subtask-detail", args=[sst0.pk]),
+            {
+                "task": sst0.task.pk,
+                "name": "something",
+                "done": False,
+            },
+        )
+        self.assertEqual(res.status_code, 200)
+
+        res = rclient.put(rvs("subtask-detail", args=[sst0.pk]))
+        self.assertEqual(res.status_code, 404)
+
+        ########## GET a subtask again ####################
+        res = sclient.get(rvs("subtask-detail", args=[sst0.pk]))
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data["name"], "something")
+
+        ########## DELETE a subtask again ####################
+        res = client.delete(rvs("subtask-detail", args=[sst0.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = rclient.delete(rvs("subtask-detail", args=[sst0.pk]))
+        self.assertEqual(res.status_code, 404)
+
+        res = sclient.delete(rvs("subtask-detail", args=[sst0.pk]))
+        self.assertEqual(res.status_code, 204)
