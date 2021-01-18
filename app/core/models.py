@@ -65,7 +65,7 @@ class Tag(Base):
 class Task(Base):
     user = models.ForeignKey(User, related_name="tasks", on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
-    note = models.TextField()
+    note = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name="tasks", through="TasksTags")
     reminder = models.DateTimeField(null=True, blank=True)
     deadline = models.DateTimeField(null=True, blank=True)
