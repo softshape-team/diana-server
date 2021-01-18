@@ -13,6 +13,8 @@ urlpatterns = [
     # Core app
     # Accounts app
     path("accounts/", include("accounts.urls")),
+    # Core app
+    path("", include("core.urls")),
     # API Docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
