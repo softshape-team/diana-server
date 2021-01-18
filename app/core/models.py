@@ -94,7 +94,7 @@ class Task(Base):
         ]
 
 
-class Checklist(Base):
+class Subtask(Base):
     task = models.ForeignKey(Task, related_name="checklist", on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     done = models.BooleanField(default=False)
