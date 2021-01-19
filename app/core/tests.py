@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from rest_framework.test import APITestCase, APIClient
 
-from .models import Task, Subtask, Tag
+from .models import Task, Subtask, Tag, TaskTag
 from .functions import rvs
 
 User = get_user_model()
@@ -60,6 +60,15 @@ class TasksTest(APITestCase):
             "rami": [
                 Tag.objects.create(user=self.users["rami"], name="Important"),
             ],
+        }
+
+        self.tasktags = {
+            "sami": [
+                TaskTag.objects.create(
+                    task=self.tasks["sami"][0],
+                    tag=self.tags["sami"][0],
+                )
+            ]
         }
 
     def test_task_list(self):
@@ -304,3 +313,100 @@ class TasksTest(APITestCase):
 
         res = sclient.delete(rvs("tag-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 204)
+
+    def test_task_list_m2m_list(self):
+        """
+        Get tasktags is not allowed.
+        Link a task with a tag via post request.
+        Authed user required.
+        User should be the owner of both task and tag.
+        """
+
+        # Gettings ready
+        client, sclient, rclient = self.clients()
+
+        sami_task = self.tasks["sami"][0]
+        sami_tag = self.tags["sami"][0]
+
+        rami_task = self.tasks["rami"][0]
+        rami_tag = self.tags["rami"][0]
+
+        ########## GET all tasktags ####################
+        # Should be deleted
+        res = client.get(rvs("tasktag-list"))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.get(rvs("tasktag-list"))
+        self.assertEqual(res.status_code, 405)
+
+        ########## POST a new tasktag ####################
+        res = client.post(rvs("tasktag-list"))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.post(
+            rvs("tasktag-list"), {"task": sami_task.pk, "tag": sami_tag.pk}
+        )
+        print(res.data)
+        self.assertEqual(res.status_code, 201)
+
+        res = rclient.post(
+            rvs("tasktag-list"), {"task": rami_task.pk, "tag": sami_tag.pk}
+        )
+        self.assertEqual(res.status_code, 400)
+
+        res = rclient.post(
+            rvs("tasktag-list"), {"task": sami_task.pk, "tag": rami_tag.pk}
+        )
+        self.assertEqual(res.status_code, 400)
+
+    def test_task_list_m2m_detail(self):
+        """
+        Get, update and delete a task-tag, allowed only for the owner of the of task-tag.
+        """
+
+        # Gettings ready
+        client, sclient, rclient = self.clients()
+
+        sami_tasktag = self.tasktags["sami"][0]
+
+        sami_task = self.tasks["sami"][0]
+        sami_tag = self.tags["sami"][0]
+
+        rami_task = self.tasks["rami"][0]
+        rami_tag = self.tags["rami"][0]
+
+        ########## Get a tasktag ####################
+        res = client.get(rvs("tasktag-detail", args=[sami_tasktag.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.get(rvs("tasktag-detail", args=[sami_tasktag.pk]))
+        self.assertEqual(res.status_code, 200)
+
+        res = rclient.get(rvs("tasktag-detail", args=[sami_tasktag.pk]))
+        self.assertEqual(res.status_code, 404)
+
+        ########## Update a tasktag ####################
+        res = client.put(rvs("tasktag-detail", args=[sami_tasktag.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.put(
+            rvs("tasktag-detail", args=[sami_tasktag.pk]),
+            {
+                "task": sami_task.pk,
+                "tag": sami_tag.pk,
+            },
+        )
+        self.assertEqual(res.status_code, 200)
+
+        res = rclient.put(rvs("tasktag-detail", args=[sami_tasktag.pk]))
+        self.assertEqual(res.status_code, 404)
+
+        ########## Delete a tasktag ####################
+        res = client.delete(rvs("tasktag-detail", args=[sami_tasktag.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.delete(rvs("tasktag-detail", args=[sami_tasktag.pk]))
+        self.assertEqual(res.status_code, 204)
+
+        res = rclient.delete(rvs("tasktag-detail", args=[sami_tasktag.pk]))
+        self.assertEqual(res.status_code, 404)

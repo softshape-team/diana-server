@@ -86,3 +86,23 @@ class TagDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
+
+
+class TaskTagList(generics.CreateAPIView):
+    serializer_class = serializers.TaskTagSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = models.TaskTag.objects.all()
+
+    def get_queryset(self):
+        user = self.request.user
+        return self.queryset.filter(task__user=user, tag__user=user)
+
+
+class TaskTagDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = serializers.TaskTagSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = models.TaskTag.objects.all()
+
+    def get_queryset(self):
+        user = self.request.user
+        return self.queryset.filter(task__user=user, tag__user=user)

@@ -10,4 +10,6 @@ urlpatterns = [
     path("subtask/<str:pk>/", views.SubtaskDetail.as_view(), name="subtask-detail"),
     path("tag/", views.TagList.as_view(), name="tag-list"),
     path("tag/<str:pk>/", views.TagDetail.as_view(), name="tag-detail"),
+    path("tasktag/", views.TaskTagList.as_view(), name="tasktag-list"),
+    path("tasktag/<str:pk>/", views.TaskTagDetail.as_view(), name="tasktag-detail"),
 ]
