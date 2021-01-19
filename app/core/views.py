@@ -1,9 +1,10 @@
-from re import L
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from . import serializers, models
-from .permissions import OwnChecklist, OwnSubtask
+from .permissions import OwnSubtask
+from .functions import task_pk_validator
 
 
 class TaskList(generics.ListCreateAPIView):
@@ -29,7 +30,7 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class SubtaskList(generics.ListCreateAPIView):
     serializer_class = serializers.SubtaskSerializer
-    permission_classes = (IsAuthenticated, OwnChecklist)
+    permission_classes = (IsAuthenticated,)
     queryset = models.Subtask.objects.all()
 
     def get_queryset(self):
@@ -37,8 +38,19 @@ class SubtaskList(generics.ListCreateAPIView):
         return self.queryset.filter(task__user=self.request.user).filter(task=task)
 
     def perform_create(self, serializer):
-        task = self.request.query_params.get("task")
-        serializer.save(task=task)
+        if self.request.method in ("PUT", "PATCH"):
+            task = self.request.query_params.get("task")
+            serializer.save(task=task)
+            return
+
+        return super().perform_create(serializer)
+
+    def list(self, request, *args, **kwargs):
+        task_pk = self.request.query_params.get("task")
+        if not task_pk_validator(request, task_pk):
+            return Response(status=404)
+
+        return super().list(request, *args, **kwargs)
 
 
 class SubtaskDetail(generics.RetrieveUpdateDestroyAPIView):

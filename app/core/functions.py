@@ -1,4 +1,5 @@
 from django.urls import reverse
+from .models import Task
 
 
 def rvs(name, *, args=None, kwargs=None, params: dict = None):
@@ -13,3 +14,17 @@ def rvs(name, *, args=None, kwargs=None, params: dict = None):
 
     second = second[:-1]
     return first + second
+
+
+def task_pk_validator(request, task_pk):
+    if not task_pk:
+        return False
+
+    task = Task.objects.filter(pk=task_pk).first()
+    if not task:
+        return False
+
+    if task.user != request.user:
+        return False
+
+    return True

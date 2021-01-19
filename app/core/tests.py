@@ -1,8 +1,7 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase, APIClient
 
 from .models import Task, Subtask
 from .functions import rvs
@@ -32,7 +31,7 @@ def users_clients() -> tuple:
     return users, clients
 
 
-class TasksTest(TestCase):
+class TasksTest(APITestCase):
     def setUp(self) -> None:
         self.users, self.clients = users_clients()
 
@@ -157,10 +156,10 @@ class TasksTest(TestCase):
         self.assertEqual(res.status_code, 401)
 
         res = sclient.post(rvs("subtask-list"), {"task": st0.pk, "name": "Foo"})
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.status_code, 201)
 
-        res = rclient.post(rvs("subtask-list", {"task": st0.pk, "name": "Bar"}))
-        self.assertEqual(res.status_code, 404)
+        res = rclient.post(rvs("subtask-list"), {"task": st0.pk, "name": "Bar"})
+        self.assertEqual(res.status_code, 400)
 
         ########## GET all again ####################
         res = sclient.get(rvs("subtask-list", params={"task": st0.pk}))

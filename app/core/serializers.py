@@ -15,3 +15,9 @@ class SubtaskSerializer(serializers.ModelSerializer):
         model = models.Subtask
         fields = "__all__"
         read_only_fields = ("pk",)
+
+    def validate_task(self, task):
+        if self.context["request"].user != task.user:
+            raise serializers.ValidationError("Task does not exists")
+
+        return task
