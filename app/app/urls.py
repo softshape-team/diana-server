@@ -11,19 +11,18 @@ urlpatterns = [
     # Admin App
     path("admin/", admin.site.urls),
     # Core app
+    path("", include("core.urls")),
     # Accounts app
     path("accounts/", include("accounts.urls")),
-    # Core app
-    path("", include("core.urls")),
     # API Docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
-        "dev/api/ui/",
+        "dev/api/schema/swagger-ui",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
     path(
-        "dev/api/docs/",
+        "dev/api/schema/redoc/",
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),

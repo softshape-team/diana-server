@@ -147,7 +147,7 @@ class TasksTest(APITestCase):
 
     def test_subtask_list(self):
         """
-        Authed user can get its checklist.
+        Authed user can get his/her task's checklist by specifing the task as URL parameter.
         Authed user can add to its checklist.
         """
 
