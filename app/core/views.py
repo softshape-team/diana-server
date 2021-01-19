@@ -65,3 +65,24 @@ class SubtaskDetail(generics.RetrieveUpdateDestroyAPIView):
             res = res.filter(task=task)
 
         return res
+
+
+class TagList(generics.ListCreateAPIView):
+    serializer_class = serializers.TagSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = models.Tag.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class TagDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = serializers.TagSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = models.Tag.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)

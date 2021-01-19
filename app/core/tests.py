@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from rest_framework.test import APITestCase, APIClient
 
-from .models import Task, Subtask
+from .models import Task, Subtask, Tag
 from .functions import rvs
 
 User = get_user_model()
@@ -50,6 +50,15 @@ class TasksTest(APITestCase):
             ],
             "rami": [
                 Subtask.objects.create(task=self.tasks["rami"][0], name="Foo"),
+            ],
+        }
+
+        self.tags = {
+            "sami": [
+                Tag.objects.create(user=self.users["sami"], name="Home"),
+            ],
+            "rami": [
+                Tag.objects.create(user=self.users["rami"], name="Important"),
             ],
         }
 
@@ -216,4 +225,82 @@ class TasksTest(APITestCase):
         self.assertEqual(res.status_code, 404)
 
         res = sclient.delete(rvs("subtask-detail", args=[sst0.pk]))
+        self.assertEqual(res.status_code, 204)
+
+    def test_tag_list(self):
+        """
+        User can get his/her tags.
+        User can add a new tag.
+        Authed user required.
+        """
+
+        # Gettings ready
+        client, sclient, rclient = self.clients()
+
+        ########## GET all tags ####################
+        res = client.get(rvs("tag-list"))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.get(rvs("tag-list"))
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.data["results"]), 1)
+
+        res = rclient.get(rvs("tag-list"))
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.data["results"]), 1)
+
+        ########## POST a new tag ####################
+        res = client.post(rvs("tag-list"))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.post(rvs("tag-list"), {"name": "foo"})
+        self.assertEqual(res.status_code, 201)
+
+        ########## Get all tags again ####################
+        res = sclient.get(rvs("tag-list"))
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.data["results"]), 2)
+
+        res = rclient.get(rvs("tag-list"))
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.data["results"]), 1)
+
+    def test_tag_detail(self):
+        """
+        User can retrieve, update and delete his/her tags only.
+        Authed user is required.
+        """
+
+        # Gettings ready
+        client, sclient, rclient = self.clients()
+        st0 = self.tags["sami"][0]
+
+        ########## GET a tag ####################
+        res = client.get(rvs("tag-detail", args=[st0.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.get(rvs("tag-detail", args=[st0.pk]))
+        self.assertEqual(res.status_code, 200)
+
+        res = rclient.get(rvs("tag-detail", args=[st0.pk]))
+        self.assertEqual(res.status_code, 404)
+
+        ########## PUT a tag ####################
+        res = client.put(rvs("tag-detail", args=[st0.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.put(rvs("tag-detail", args=[st0.pk]), {"name": "foo"})
+        self.assertEqual(res.status_code, 200)
+
+        res = rclient.put(rvs("tag-detail", args=[st0.pk]), {"name": "foo"})
+        self.assertEqual(res.status_code, 404)
+
+        ########## DELETE a tag ####################
+        res = client.delete(rvs("tag-detail", args=[st0.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = rclient.delete(rvs("tag-detail", args=[st0.pk]))
+        self.assertEqual(res.status_code, 404)
+
+        res = sclient.delete(rvs("tag-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 204)
