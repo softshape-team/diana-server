@@ -73,15 +73,14 @@ class TasksTest(APITestCase):
 
     def test_task_list(self):
         """
-        A user can get its own tasks only.
-        A user can add new task to his account only.
-        authed user required
+        Authed user can get its own tasks only.
+        Authed user can add new task to his account only.
         """
 
         # Getting ready
         client, sclient, _ = self.clients()
 
-        ########## GET all ####################
+        ########## List ####################
         res = client.get(rvs("task-list"))
         self.assertEqual(res.status_code, 401)
 
@@ -89,7 +88,7 @@ class TasksTest(APITestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.data["results"]), 1)
 
-        ########## POST new ####################
+        ########## Create ####################
         res = client.post(rvs("task-list"))
         self.assertEqual(res.status_code, 401)
 
@@ -102,22 +101,21 @@ class TasksTest(APITestCase):
         )
         self.assertEqual(res.status_code, 201)
 
-        ########## GET all again ####################
+        ########## List again ####################
         res = sclient.get(rvs("task-list"))
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.data["results"]), 2)
 
     def test_task_detail(self):
         """
-        User can only (access, update, delete) his/her task.
-        authed user required.
+        Authed user can only (access, update, delete) his/her task.
         """
 
         # Gettings ready
         client, sclient, rclient = self.clients()
         st0 = self.tasks["sami"][0]
 
-        ########## GET a task ####################
+        ########## Retrieve ####################
         res = client.get(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -127,7 +125,7 @@ class TasksTest(APITestCase):
         res = rclient.get(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 404)
 
-        ########## PUT a task ####################
+        ########## Update ####################
         res = client.put(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -137,7 +135,7 @@ class TasksTest(APITestCase):
         res = rclient.put(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 404)
 
-        ########## DELETE a task ####################
+        ########## Destroy ####################
         res = client.delete(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -149,16 +147,15 @@ class TasksTest(APITestCase):
 
     def test_subtask_list(self):
         """
-        Get task's checklists.
-        Add a new subtask.
-        Authed user required.
+        Authed user can get its checklist.
+        Authed user can add to its checklist.
         """
 
         # Gettings ready
         client, sclient, rclient = self.clients()
         st0 = self.tasks["sami"][0]
 
-        ########## GET a checklist ####################
+        ########## List ####################
         res = client.get(rvs("subtask-list"))
         self.assertEqual(res.status_code, 401)
 
@@ -169,7 +166,7 @@ class TasksTest(APITestCase):
         res = rclient.get(rvs("subtask-list", params={"task": st0.pk}))
         self.assertEqual(res.status_code, 404)
 
-        ########## POST a subtask ####################
+        ########## Create ####################
         res = client.post(rvs("subtask-list"))
         self.assertEqual(res.status_code, 401)
 
@@ -179,22 +176,21 @@ class TasksTest(APITestCase):
         res = rclient.post(rvs("subtask-list"), {"task": st0.pk, "name": "Bar"})
         self.assertEqual(res.status_code, 400)
 
-        ########## GET all again ####################
+        ########## List ####################
         res = sclient.get(rvs("subtask-list", params={"task": st0.pk}))
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.data["results"]), 2)
 
     def test_subtask_detail(self):
         """
-        Get, Update, Delete a task's subtasks.
-        Authed user required.
+        Authed user can Get, Update, Delete a only his/her task's subtasks.
         """
 
         # Gettings ready
         client, sclient, rclient = self.clients()
         sst0 = self.subtasks["sami"][0]
 
-        ########## GET a subtask ####################
+        ########## Retrieve ####################
         res = client.get(rvs("subtask-detail", args=[sst0.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -204,7 +200,7 @@ class TasksTest(APITestCase):
         res = rclient.get(rvs("subtask-detail", args=[sst0.pk]))
         self.assertEqual(res.status_code, 404)
 
-        ########## PUT a subtask ####################
+        ########## Update ####################
         res = client.put(rvs("subtask-detail", args=[sst0.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -221,12 +217,12 @@ class TasksTest(APITestCase):
         res = rclient.put(rvs("subtask-detail", args=[sst0.pk]))
         self.assertEqual(res.status_code, 404)
 
-        ########## GET a subtask again ####################
+        ########## Retrieve again ####################
         res = sclient.get(rvs("subtask-detail", args=[sst0.pk]))
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.data["name"], "something")
 
-        ########## DELETE a subtask again ####################
+        ########## Destroy ####################
         res = client.delete(rvs("subtask-detail", args=[sst0.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -238,15 +234,14 @@ class TasksTest(APITestCase):
 
     def test_tag_list(self):
         """
-        User can get his/her tags.
-        User can add a new tag.
-        Authed user required.
+        Authed user can get his/her tags only.
+        Authed user can add a new tag to his account only.
         """
 
         # Gettings ready
         client, sclient, rclient = self.clients()
 
-        ########## GET all tags ####################
+        ########## List ####################
         res = client.get(rvs("tag-list"))
         self.assertEqual(res.status_code, 401)
 
@@ -258,14 +253,14 @@ class TasksTest(APITestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.data["results"]), 1)
 
-        ########## POST a new tag ####################
+        ########## Create ####################
         res = client.post(rvs("tag-list"))
         self.assertEqual(res.status_code, 401)
 
         res = sclient.post(rvs("tag-list"), {"name": "foo"})
         self.assertEqual(res.status_code, 201)
 
-        ########## Get all tags again ####################
+        ########## List again ####################
         res = sclient.get(rvs("tag-list"))
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.data["results"]), 2)
@@ -276,15 +271,14 @@ class TasksTest(APITestCase):
 
     def test_tag_detail(self):
         """
-        User can retrieve, update and delete his/her tags only.
-        Authed user is required.
+        Authed user can retrieve, update and delete his/her tags only.
         """
 
         # Gettings ready
         client, sclient, rclient = self.clients()
         st0 = self.tags["sami"][0]
 
-        ########## GET a tag ####################
+        ########## Retrieve ####################
         res = client.get(rvs("tag-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -294,7 +288,7 @@ class TasksTest(APITestCase):
         res = rclient.get(rvs("tag-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 404)
 
-        ########## PUT a tag ####################
+        ########## Update ####################
         res = client.put(rvs("tag-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -304,7 +298,7 @@ class TasksTest(APITestCase):
         res = rclient.put(rvs("tag-detail", args=[st0.pk]), {"name": "foo"})
         self.assertEqual(res.status_code, 404)
 
-        ########## DELETE a tag ####################
+        ########## Destroy ####################
         res = client.delete(rvs("tag-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -317,9 +311,7 @@ class TasksTest(APITestCase):
     def test_task_list_m2m_list(self):
         """
         Get tasktags is not allowed.
-        Link a task with a tag via post request.
-        Authed user required.
-        User should be the owner of both task and tag.
+        Authed user can create a new tasktag linked with (task, tag) belong to him/her.
         """
 
         # Gettings ready
@@ -331,15 +323,15 @@ class TasksTest(APITestCase):
         rami_task = self.tasks["rami"][0]
         rami_tag = self.tags["rami"][0]
 
-        ########## GET all tasktags ####################
-        # Should be deleted
+        ########## List ####################
+        # TODO: Review
         res = client.get(rvs("tasktag-list"))
         self.assertEqual(res.status_code, 401)
 
         res = sclient.get(rvs("tasktag-list"))
         self.assertEqual(res.status_code, 405)
 
-        ########## POST a new tasktag ####################
+        ########## Create ####################
         res = client.post(rvs("tasktag-list"))
         self.assertEqual(res.status_code, 401)
 
@@ -360,7 +352,7 @@ class TasksTest(APITestCase):
 
     def test_task_list_m2m_detail(self):
         """
-        Get, update and delete a task-tag, allowed only for the owner of the of task-tag.
+        Authed user can get, update and delete a task-tag, allowed only for the owner of the of task-tag.
         """
 
         # Gettings ready
@@ -371,10 +363,7 @@ class TasksTest(APITestCase):
         sami_task = self.tasks["sami"][0]
         sami_tag = self.tags["sami"][0]
 
-        rami_task = self.tasks["rami"][0]
-        rami_tag = self.tags["rami"][0]
-
-        ########## Get a tasktag ####################
+        ########## Retrieve ####################
         res = client.get(rvs("tasktag-detail", args=[sami_tasktag.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -384,7 +373,7 @@ class TasksTest(APITestCase):
         res = rclient.get(rvs("tasktag-detail", args=[sami_tasktag.pk]))
         self.assertEqual(res.status_code, 404)
 
-        ########## Update a tasktag ####################
+        ########## Update ####################
         res = client.put(rvs("tasktag-detail", args=[sami_tasktag.pk]))
         self.assertEqual(res.status_code, 401)
 
@@ -400,7 +389,7 @@ class TasksTest(APITestCase):
         res = rclient.put(rvs("tasktag-detail", args=[sami_tasktag.pk]))
         self.assertEqual(res.status_code, 404)
 
-        ########## Delete a tasktag ####################
+        ########## Destroy ####################
         res = client.delete(rvs("tasktag-detail", args=[sami_tasktag.pk]))
         self.assertEqual(res.status_code, 401)
 

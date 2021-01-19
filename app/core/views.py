@@ -8,6 +8,11 @@ from .functions import task_pk_validator
 
 
 class TaskList(generics.ListCreateAPIView):
+    """
+    Authed user can get its own tasks only.
+    Authed user can add new task to his account only.
+    """
+
     serializer_class = serializers.TaskSerializer
     permission_classes = (IsAuthenticated,)
     queryset = models.Task.objects.all()
@@ -20,6 +25,10 @@ class TaskList(generics.ListCreateAPIView):
 
 
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Authed user can only (access, update, delete) his/her task.
+    """
+
     serializer_class = serializers.TaskSerializer
     permission_classes = (IsAuthenticated,)
     queryset = models.Task.objects.all()
@@ -29,6 +38,11 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class SubtaskList(generics.ListCreateAPIView):
+    """
+    Authed user can get its checklist.
+    Authed user can add to its checklist.
+    """
+
     serializer_class = serializers.SubtaskSerializer
     permission_classes = (IsAuthenticated,)
     queryset = models.Subtask.objects.all()
@@ -54,6 +68,10 @@ class SubtaskList(generics.ListCreateAPIView):
 
 
 class SubtaskDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Authed user can Get, Update, Delete a only his/her task's subtasks.
+    """
+
     serializer_class = serializers.SubtaskSerializer
     permission_classes = (IsAuthenticated, OwnSubtask)
     queryset = models.Subtask.objects.all()
@@ -68,6 +86,11 @@ class SubtaskDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TagList(generics.ListCreateAPIView):
+    """
+    Authed user can get his/her tags only.
+    Authed user can add a new tag to his account only.
+    """
+
     serializer_class = serializers.TagSerializer
     permission_classes = (IsAuthenticated,)
     queryset = models.Tag.objects.all()
@@ -80,6 +103,10 @@ class TagList(generics.ListCreateAPIView):
 
 
 class TagDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Authed user can retrieve, update and delete his/her tags only.
+    """
+
     serializer_class = serializers.TagSerializer
     permission_classes = (IsAuthenticated,)
     queryset = models.Tag.objects.all()
@@ -89,6 +116,11 @@ class TagDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TaskTagList(generics.CreateAPIView):
+    """
+    Get tasktags is not allowed.
+    Authed user can create a new tasktag linked with (task, tag) belong to him/her.
+    """
+
     serializer_class = serializers.TaskTagSerializer
     permission_classes = (IsAuthenticated,)
     queryset = models.TaskTag.objects.all()
@@ -99,6 +131,10 @@ class TaskTagList(generics.CreateAPIView):
 
 
 class TaskTagDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Authed user can get, update and delete a task-tag, allowed only for the owner of the of task-tag.
+    """
+
     serializer_class = serializers.TaskTagSerializer
     permission_classes = (IsAuthenticated,)
     queryset = models.TaskTag.objects.all()
