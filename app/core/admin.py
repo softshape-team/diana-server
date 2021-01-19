@@ -5,13 +5,13 @@ from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 from .models import Task, Tag, Habit, HabitLog
 
 
-class TasksTagsAdmin(admin.TabularInline):
+class TaskTagAdmin(admin.TabularInline):
     model = Task.tags.through
 
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
-    inlines = [TasksTagsAdmin]
+    inlines = [TaskTagAdmin]
 
 
 @admin.register(Tag)
