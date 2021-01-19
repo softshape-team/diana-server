@@ -105,7 +105,7 @@ class Subtask(Base):
 
 class TaskTag(Base):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.SET_DEFAULT, default=0)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.task} - {self.tag}"

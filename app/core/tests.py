@@ -346,7 +346,6 @@ class TasksTest(APITestCase):
         res = sclient.post(
             rvs("tasktag-list"), {"task": sami_task.pk, "tag": sami_tag.pk}
         )
-        print(res.data)
         self.assertEqual(res.status_code, 201)
 
         res = rclient.post(
