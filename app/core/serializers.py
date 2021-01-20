@@ -5,7 +5,7 @@ from . import models
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    done = serializers.BooleanField(default=False)
+    done = serializers.BooleanField(default=False, write_only=True)
 
     def validate(self, attrs):
         method = self.context["request"].method
