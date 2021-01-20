@@ -147,6 +147,13 @@ class Habit(Base):
     def __str__(self):
         return f"{self.name}"
 
+    def clean(self):
+        if not self.days:
+            return
+
+        if len(self.days) != len(set(self.days)):
+            raise ValidationError("Day can not be repeated.")
+
     class Meta:
         ordering = ["user"]
 
