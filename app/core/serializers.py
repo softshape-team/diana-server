@@ -7,6 +7,20 @@ from . import models
 class TaskSerializer(serializers.ModelSerializer):
     done = serializers.BooleanField(default=False)
 
+    def validate(self, attrs):
+        method = self.context["request"].method
+        if method in ["PUT", "PATCH"] and attrs.get("done"):
+            attrs["done_at"] = timezone.now()
+
+        elif method == "POST" and attrs.get("done"):
+            raise serializers.ValidationError(
+                "You can't create an already completed task."
+            )
+
+        del attrs["done"]
+
+        return attrs
+
     class Meta:
         model = models.Task
         fields = (
@@ -22,40 +36,21 @@ class TaskSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ("pk", "user", "tags", "done_at")
 
-    def validate(self, attrs):
-        method = self.context["request"].method
-        if method in ["PUT", "PATCH"] and attrs.get("done"):
-            attrs["done_at"] = timezone.now()
-
-        elif method == "POST" and attrs.get("done"):
-            raise serializers.ValidationError(
-                "You can't create an already completed task."
-            )
-
-        del attrs["done"]
-
-        return attrs
-
 
 class SubtaskSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Subtask
-        fields = "__all__"
-        read_only_fields = ("pk",)
-
     def validate_task(self, task):
         if self.context["request"].user != task.user:
             raise serializers.ValidationError("Task does not exists")
 
         return task
 
+    class Meta:
+        model = models.Subtask
+        fields = "__all__"
+        read_only_fields = ("pk",)
+
 
 class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Tag
-        fields = "__all__"
-        read_only_fields = ("user",)
-
     def validate(self, attrs):
         user = self.context["request"].user
         try:
@@ -64,13 +59,13 @@ class TagSerializer(serializers.ModelSerializer):
         except models.Tag.DoesNotExist:
             return attrs
 
+    class Meta:
+        model = models.Tag
+        fields = "__all__"
+        read_only_fields = ("user",)
+
 
 class TaskTagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.TaskTag
-        fields = "__all__"
-        read_only_fields = ["pk"]
-
     def validate(self, attrs):
         user = self.context["request"].user
 
@@ -80,3 +75,8 @@ class TaskTagSerializer(serializers.ModelSerializer):
             )
 
         return attrs
+
+    class Meta:
+        model = models.TaskTag
+        fields = "__all__"
+        read_only_fields = ["pk"]
