@@ -119,6 +119,8 @@ class TaskTag(Base):
     class Meta:
         ordering = ["tag"]
 
+        unique_together = ["task", "tag"]
+
         indexes = [
             models.Index(fields=["task"]),
             models.Index(fields=["tag"]),

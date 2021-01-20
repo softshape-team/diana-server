@@ -56,6 +56,7 @@ class TasksTest(APITestCase):
         self.tags = {
             "sami": [
                 Tag.objects.create(user=self.users["sami"], name="Home"),
+                Tag.objects.create(user=self.users["sami"], name="Important"),
             ],
             "rami": [
                 Tag.objects.create(user=self.users["rami"], name="Important"),
@@ -247,7 +248,7 @@ class TasksTest(APITestCase):
 
         res = sclient.get(rvs("tag-list"))
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(len(res.data["results"]), 1)
+        self.assertEqual(len(res.data["results"]), 2)
 
         res = rclient.get(rvs("tag-list"))
         self.assertEqual(res.status_code, 200)
@@ -263,7 +264,7 @@ class TasksTest(APITestCase):
         ########## List again ####################
         res = sclient.get(rvs("tag-list"))
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(len(res.data["results"]), 2)
+        self.assertEqual(len(res.data["results"]), 3)
 
         res = rclient.get(rvs("tag-list"))
         self.assertEqual(res.status_code, 200)
@@ -308,7 +309,7 @@ class TasksTest(APITestCase):
         res = sclient.delete(rvs("tag-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 204)
 
-    def test_task_list_m2m_list(self):
+    def test_task_tag_m2m_list(self):
         """
         Get tasktags is not allowed.
         Authed user can create a new tasktag linked with (task, tag) belong to him/her.
@@ -319,6 +320,7 @@ class TasksTest(APITestCase):
 
         sami_task = self.tasks["sami"][0]
         sami_tag = self.tags["sami"][0]
+        sami_other_tag = self.tags["sami"][1]
 
         rami_task = self.tasks["rami"][0]
         rami_tag = self.tags["rami"][0]
@@ -338,6 +340,11 @@ class TasksTest(APITestCase):
         res = sclient.post(
             rvs("tasktag-list"), {"task": sami_task.pk, "tag": sami_tag.pk}
         )
+        self.assertEqual(res.status_code, 400)
+
+        res = sclient.post(
+            rvs("tasktag-list"), {"task": sami_task.pk, "tag": sami_other_tag.pk}
+        )
         self.assertEqual(res.status_code, 201)
 
         res = rclient.post(
@@ -350,7 +357,7 @@ class TasksTest(APITestCase):
         )
         self.assertEqual(res.status_code, 400)
 
-    def test_task_list_m2m_detail(self):
+    def test_task_tag_m2m_detail(self):
         """
         Authed user can get, update and delete a task-tag, allowed only for the owner of the of task-tag.
         """
