@@ -261,6 +261,9 @@ class TasksTest(APITestCase):
         res = sclient.post(rvs("tag-list"), {"name": "foo"})
         self.assertEqual(res.status_code, 201)
 
+        res = sclient.post(rvs("tag-list"), {"name": "foo"})
+        self.assertEqual(res.status_code, 400)
+
         ########## List again ####################
         res = sclient.get(rvs("tag-list"))
         self.assertEqual(res.status_code, 200)

@@ -48,7 +48,7 @@ class Color(models.IntegerChoices):
 
 class Tag(Base):
     user = models.ForeignKey(User, related_name="tags", on_delete=models.CASCADE)
-    name = models.CharField(max_length=16)
+    name = models.CharField(max_length=16, unique=True)
     color = models.IntegerField(choices=Color.choices, default=0)
 
     def __str__(self):
