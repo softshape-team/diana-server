@@ -48,7 +48,7 @@ class Color(models.IntegerChoices):
 
 class Tag(Base):
     user = models.ForeignKey(User, related_name="tags", on_delete=models.CASCADE)
-    name = models.CharField(max_length=16, unique=True)
+    name = models.CharField(max_length=16)
     color = models.IntegerField(choices=Color.choices, default=0)
 
     def __str__(self):
@@ -56,6 +56,8 @@ class Tag(Base):
 
     class Meta:
         ordering = ["user", "name"]
+
+        unique_together = ["user", "name"]
 
         indexes = [
             models.Index(fields=["user"]),

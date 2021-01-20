@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.fields import ReadOnlyField
 
 from . import models
 
@@ -29,6 +28,14 @@ class TagSerializer(serializers.ModelSerializer):
         model = models.Tag
         fields = "__all__"
         read_only_fields = ("user",)
+
+    def validate(self, attrs):
+        user = self.context["request"].user
+        try:
+            models.Tag.objects.get(user=user, name=attrs["name"])
+            raise serializers.ValidationError("You already have this tag registered.")
+        except models.Tag.DoesNotExist:
+            return attrs
 
 
 class TaskTagSerializer(serializers.ModelSerializer):
