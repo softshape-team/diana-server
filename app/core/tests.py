@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
@@ -95,12 +96,27 @@ class TasksTest(APITestCase):
 
         res = sclient.post(
             rvs("task-list"),
-            {
-                "name": "Foo",
-                "reminders": [timezone.now(), timezone.now()],
-            },
+            {"name": "Foo", "reminder": timezone.now() + timedelta(days=1)},
         )
         self.assertEqual(res.status_code, 201)
+
+        res = sclient.post(
+            rvs("task-list"),
+            {
+                "name": "Bar",
+                "reminder": timezone.now() - timedelta(days=1),
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+
+        res = sclient.post(
+            rvs("task-list"),
+            {
+                "name": "Other",
+                "deadline": timezone.now() - timedelta(days=1),
+            },
+        )
+        self.assertEqual(res.status_code, 400)
 
         ########## List again ####################
         res = sclient.get(rvs("task-list"))

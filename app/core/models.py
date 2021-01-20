@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 
 from django_better_admin_arrayfield.models.fields import ArrayField
 
-from .validators import BothIncludedRangeValidator
+from .validators import BothIncludedRangeValidator, FutureDateTimeValidator
 
 
 User = get_user_model()
@@ -69,8 +69,12 @@ class Task(Base):
     name = models.CharField(max_length=256)
     note = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name="tasks", through="TaskTag")
-    reminder = models.DateTimeField(null=True, blank=True)
-    deadline = models.DateTimeField(null=True, blank=True)
+    reminder = models.DateTimeField(
+        null=True, blank=True, validators=[FutureDateTimeValidator()]
+    )
+    deadline = models.DateTimeField(
+        null=True, blank=True, validators=[FutureDateTimeValidator()]
+    )
     done_at = models.DateTimeField(null=True, blank=True)
     priority = models.IntegerField(
         choices=Priority.choices,
