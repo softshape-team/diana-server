@@ -3,7 +3,6 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
-from django.db.models.fields import BooleanField
 
 from core.validators import BothIncludedRangeValidator
 
@@ -28,9 +27,11 @@ class User(AbstractUser):
         default=0, validators=[BothIncludedRangeValidator(0, 100)]
     )
 
-    is_active = BooleanField(default=True)
-    is_staff = BooleanField(default=False)
-    is_superuser = BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    timezone = models.CharField(max_length=32, null=True, blank=True)
 
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
