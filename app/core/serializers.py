@@ -1,9 +1,12 @@
+from django.utils import timezone
 from rest_framework import serializers
 
 from . import models
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    done = serializers.BooleanField(default=False)
+
     class Meta:
         model = models.Task
         fields = (
@@ -15,8 +18,23 @@ class TaskSerializer(serializers.ModelSerializer):
             "deadline",
             "done_at",
             "priority",
+            "done",
         )
         read_only_fields = ("pk", "user", "tags", "done_at")
+
+    def validate(self, attrs):
+        method = self.context["request"].method
+        if method in ["PUT", "PATCH"] and attrs.get("done"):
+            attrs["done_at"] = timezone.now()
+
+        elif method == "POST" and attrs.get("done"):
+            raise serializers.ValidationError(
+                "You can't create an already completed task."
+            )
+
+        del attrs["done"]
+
+        return attrs
 
 
 class SubtaskSerializer(serializers.ModelSerializer):

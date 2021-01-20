@@ -118,6 +118,15 @@ class TasksTest(APITestCase):
         )
         self.assertEqual(res.status_code, 400)
 
+        res = sclient.post(
+            rvs("task-list"),
+            {
+                "name": "Other task to be created",
+                "done": True,
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+
         ########## List again ####################
         res = sclient.get(rvs("task-list"))
         self.assertEqual(res.status_code, 200)
@@ -149,8 +158,18 @@ class TasksTest(APITestCase):
         res = sclient.put(rvs("task-detail", args=[st0.pk]), {"name": "New name"})
         self.assertEqual(res.status_code, 200)
 
+        res = sclient.put(
+            rvs("task-detail", args=[st0.pk]), {"name": "New name", "done": True}
+        )
+        self.assertEqual(res.status_code, 200)
+
         res = rclient.put(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 404)
+
+        ########## Destroy ####################
+        res = sclient.get(rvs("task-detail", args=[st0.pk]))
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(res.data["done_at"])
 
         ########## Destroy ####################
         res = client.delete(rvs("task-detail", args=[st0.pk]))
