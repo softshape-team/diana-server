@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 
-from .models import Task, Tag, Habit, HabitLog
+from .models import Task, Subtask, Tag, Habit, HabitLog
 
 
 class TaskTagAdmin(admin.TabularInline):
@@ -13,6 +13,11 @@ class TaskTagAdmin(admin.TabularInline):
 class TaskAdmin(admin.ModelAdmin):
     readonly_fields = ["done_at"]
     inlines = [TaskTagAdmin]
+
+
+@admin.register(Subtask)
+class SubtaskAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(Tag)
