@@ -1,10 +1,12 @@
+import uuid
+
 from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from rest_framework.test import APITestCase, APIClient
 
-from .models import Task, Subtask, Tag, TaskTag
+from .models import Task, Subtask, Tag, TaskTag, Habit, HabitLog
 from .functions import rvs
 
 User = get_user_model()
@@ -33,7 +35,7 @@ def users_clients() -> tuple:
 
 
 class TasksTest(APITestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         self.users, self.clients = users_clients()
 
         self.tasks = {
@@ -443,3 +445,168 @@ class TasksTest(APITestCase):
 
         res = rclient.delete(rvs("tasktag-detail", args=[sami_tasktag.pk]))
         self.assertEqual(res.status_code, 404)
+
+
+class HabitTest(APITestCase):
+    def setUp(self):
+        self.users, self.clients = users_clients()
+
+        self.habits = {
+            "sami": [
+                Habit.objects.create(user=self.users["sami"], name="Foo"),
+                Habit.objects.create(user=self.users["sami"], name="Bar"),
+            ],
+            "rami": [
+                Habit.objects.create(user=self.users["rami"], name="Foo"),
+            ],
+        }
+
+        self.habit_log = {
+            "sami": [
+                HabitLog.objects.create(
+                    habit=self.habits["sami"][0], done_at=timezone.now()
+                ),
+                HabitLog.objects.create(
+                    habit=self.habits["sami"][1], done_at=timezone.now()
+                ),
+            ]
+        }
+
+    def test_habit_list(self):
+        """
+        Authed user can list his habits only.
+        Authed user can create a new habit associate with his account only.
+        """
+
+        # Gettings ready
+        client, sclient, rclient = self.clients()
+
+        ########## List ####################
+        res = client.get(rvs("habit-list"))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.get(rvs("habit-list"))
+        self.assertEqual(res.status_code, 200)
+
+        res = rclient.get(rvs("habit-list"))
+        self.assertEqual(res.status_code, 200)
+
+        ########## Create ####################
+        res = client.post(rvs("habit-list"), {})
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.post(rvs("habit-list"), {"name": "Bar"})
+        self.assertEqual(res.status_code, 201)
+
+        res = rclient.post(rvs("habit-list"), {"name": "Bar"})
+        self.assertEqual(res.status_code, 201)
+
+        res = sclient.post(rvs("habit-list"), {"name": "Something", "days": [0, 1, 2]})
+        self.assertEqual(res.status_code, 201)
+
+        res = sclient.post(rvs("habit-list"), {"name": "Something", "days": [0, 1, 1]})
+        self.assertEqual(res.status_code, 400)
+
+        res = sclient.post(rvs("habit-list"), {"name": "Something", "days": [0, 7]})
+        self.assertEqual(res.status_code, 400)
+
+        ########## List again ####################
+        res = sclient.get(rvs("habit-list"))
+        self.assertEqual(len(res.data["results"]), 4)
+
+    def test_habit_detail(self):
+        """
+        Authed user can (retrieve, update, delete) his habits only.
+        """
+
+        # Gettings ready
+        client, sclient, rclient = self.clients()
+        sh = self.habits["sami"][0]
+
+        ########## Retrieve ####################
+        res = client.get(rvs("habit-detail", args=[sh.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.get(rvs("habit-detail", args=[sh.pk]))
+        self.assertEqual(res.status_code, 200)
+
+        res = rclient.get(rvs("habit-detail", args=[sh.pk]))
+        self.assertEqual(res.status_code, 404)
+
+        ########## Update ####################
+        res = client.put(rvs("habit-detail", args=[sh.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.put(rvs("habit-detail", args=[sh.pk]), {"name": "Orange"})
+        self.assertEqual(res.status_code, 200)
+
+        res = sclient.put(
+            rvs("habit-detail", args=[sh.pk]),
+            {
+                "name": "Orange",
+                "days": [1, 7],
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+
+        res = rclient.put(rvs("habit-detail", args=[sh.pk]))
+        self.assertEqual(res.status_code, 404)
+
+        ########## Delete ####################
+        res = client.delete(rvs("habit-detail", args=[sh.pk]))
+        self.assertEqual(res.status_code, 401)
+
+        res = rclient.delete(rvs("habit-detail", args=[sh.pk]))
+        self.assertEqual(res.status_code, 404)
+
+        res = sclient.delete(rvs("habit-detail", args=[sh.pk]))
+        self.assertEqual(res.status_code, 204)
+
+        ########## List again ####################
+        res = sclient.get(rvs("habit-list"))
+        self.assertEqual(len(res.data["results"]), 1)
+
+    def test_habitlog_list(self):
+        """
+        Authed user can list his habitlog only.
+        Authed user can create a new habit log => This is equal to mark a habit as paracticed.
+        """
+
+        # Gettings ready
+        client, sclient, rclient = self.clients()
+        sh0 = self.habits["sami"][0]
+        shl0 = self.habit_log["sami"][0]
+
+        ########## List ####################
+        res = client.get(rvs("habitlog-list"))
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.get(rvs("habitlog-list"))
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.data["results"]), 2)
+
+        res = sclient.get(rvs("habitlog-list", params={"habit": sh0.pk}))
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.data["results"]), 1)
+        self.assertEqual(res.data["results"][0]["id"], str(shl0.pk))
+
+        res = rclient.get(rvs("habitlog-list"))
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.data["results"]), 0)
+
+        ########## Create ####################
+        res = client.post(rvs("habitlog-list"), {})
+        self.assertEqual(res.status_code, 401)
+
+        res = sclient.post(rvs("habitlog-list"), {"habit": sh0.pk})
+        self.assertEqual(res.status_code, 201)
+
+        res = rclient.post(rvs("habitlog-list"), {"habit": sh0.pk})
+        self.assertEqual(res.status_code, 400)
+
+        res = rclient.post(rvs("habitlog-list"), {"habit": uuid.uuid4()})
+        self.assertEqual(res.status_code, 400)
+
+        ########## List again ####################
+        res = sclient.get(rvs("habitlog-list"))
+        self.assertEqual(len(res.data["results"]), 3)

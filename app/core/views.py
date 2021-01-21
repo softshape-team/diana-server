@@ -1,3 +1,4 @@
+from django.db.models import query
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -142,3 +143,38 @@ class TaskTagDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         user = self.request.user
         return self.queryset.filter(task__user=user, tag__user=user)
+
+
+class HabitList(generics.ListCreateAPIView):
+    serializer_class = serializers.HabitSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = models.Habit.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class HabitDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = serializers.HabitSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = models.Habit.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+
+class HabitLogList(generics.ListCreateAPIView):
+    serializer_class = serializers.HabitLogSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = models.HabitLog.objects.all()
+
+    def get_queryset(self):
+        res = self.queryset.filter(habit__user=self.request.user)
+        params = self.request.query_params
+        if "habit" in params:
+            res = res.filter(habit=params["habit"])
+
+        return res

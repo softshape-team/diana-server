@@ -81,3 +81,28 @@ class TaskTagSerializer(serializers.ModelSerializer):
         model = models.TaskTag
         fields = "__all__"
         read_only_fields = ["pk"]
+
+
+class HabitSerializer(serializers.ModelSerializer):
+    def validate_days(self, days):
+        if len(days) != len(set(days)):
+            raise serializers.ValidationError("Days can not be repeated")
+
+        return days
+
+    class Meta:
+        model = models.Habit
+        fields = "__all__"
+        read_only_fields = ("pk", "user")
+
+
+class HabitLogSerializer(serializers.ModelSerializer):
+    def validate_habit(self, habit):
+        if habit.user != self.context["request"].user:
+            raise serializers.ValidationError("Habit does not exists")
+
+        return habit
+
+    class Meta:
+        model = models.HabitLog
+        fields = "__all__"
