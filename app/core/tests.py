@@ -570,6 +570,7 @@ class HabitTest(APITestCase):
         """
         Authed user can list his habitlog only.
         Authed user can create a new habit log => This is equal to mark a habit as paracticed.
+        filtering supported: specify habit=pk to filter habitlog by the habit.
         """
 
         # Gettings ready

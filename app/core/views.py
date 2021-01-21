@@ -146,6 +146,11 @@ class TaskTagDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class HabitList(generics.ListCreateAPIView):
+    """
+    Authed user can list his habits only.
+    Authed user can create a new habit associate with his account only.
+    """
+
     serializer_class = serializers.HabitSerializer
     permission_classes = (IsAuthenticated,)
     queryset = models.Habit.objects.all()
@@ -158,6 +163,10 @@ class HabitList(generics.ListCreateAPIView):
 
 
 class HabitDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Authed user can (retrieve, update, delete) his habits only.
+    """
+
     serializer_class = serializers.HabitSerializer
     permission_classes = (IsAuthenticated,)
     queryset = models.Habit.objects.all()
@@ -167,6 +176,12 @@ class HabitDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class HabitLogList(generics.ListCreateAPIView):
+    """
+    Authed user can list his habitlog only.
+    Authed user can create a new habit log => This is equal to mark a habit as paracticed.
+    filtering supported: specify habit=pk to filter habitlog by the habit.
+    """
+
     serializer_class = serializers.HabitLogSerializer
     permission_classes = (IsAuthenticated,)
     queryset = models.HabitLog.objects.all()
