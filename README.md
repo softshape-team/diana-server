@@ -6,7 +6,19 @@
 
 All contributions are very **welcomed!**
 
-If you have an idea to improve **Diana** and makes life easier, don't hesitate to do so!
+### Prerequisites
+
+1. Docker
+
+### How to get up and running
+
+0. **_OPTIONALLY_** You can run `pipenv install --dev` in `diana-server/app` to install all python dependencies needed in this project so you can get autocompletion in your IDE -- Requires **python** and **pipenv**
+1. in the root directory run `docker-compose -f docker-compose.yml -f docker-compose.dev up`
+2. Then run `docker exec -it diana-server_web_1 bash`
+3. In the sub-shell run
+   1. `python manage.py collectstatic`
+   2. `python manage.py migrate`
+   3. `python manage.py createsuperuser` follow the instruction to create a new superuser
 
 ## Database
 
