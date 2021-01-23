@@ -13,9 +13,16 @@ All contributions are very **welcomed!**
 ### How to get up and running
 
 0. **_OPTIONALLY_** You can run `pipenv install --dev` in `diana-server/app` to install all python dependencies needed in this project so you can get autocompletion in your IDE -- Requires **python** and **pipenv**
-1. in the root directory run `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up`
-2. Then run `docker exec -it diana-server_web_1 bash`
-3. In the sub-shell run
+1. create **.env file** in the root directory to hold the environment variables, some of environment variables are
+   1. SECRET_KEY
+   2. POSTGRES_DB
+   3. POSTGRES_USER
+   4. POSTGRES_PASSWORD
+   5. EMAIL_HOST_USER
+   6. EMAIL_HOST_PASSWORD
+2. in the root directory run `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up`
+3. Then run `docker exec -it diana-server_web_1 bash`
+4. In the sub-shell run
    1. `python manage.py collectstatic`
    2. `python manage.py migrate`
    3. `python manage.py createsuperuser` follow the instruction to create a new superuser
