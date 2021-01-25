@@ -14,12 +14,12 @@ All contributions are very **welcomed!**
 
 0. **_OPTIONALLY_** You can run `pipenv install --dev` in `diana-server/app` to install all python dependencies needed in this project so you can get autocompletion in your IDE -- Requires **python** and **pipenv**
 1. create **.env file** in the root directory to hold the environment variables, some of environment variables are
-   1. SECRET_KEY
-   2. POSTGRES_DB
-   3. POSTGRES_USER
-   4. POSTGRES_PASSWORD
-   5. EMAIL_HOST_USER
-   6. EMAIL_HOST_PASSWORD
+   1. SECRET_KEY=use_secret_key
+   2. POSTGRES_DB=choose_any
+   3. POSTGRES_USER=choose_any
+   4. POSTGRES_PASSWORD=choose_ay
+   5. EMAIL_HOST_USER=needed_in_reset_password
+   6. EMAIL_HOST_PASSWORD=needed_in_reset_password
 2. in the root directory run `docker-compose -f docker-compose.yml -f docker-compose.dev.yml up`
 3. Then run `docker exec -it diana-server_web_1 bash`
 4. In the sub-shell run
