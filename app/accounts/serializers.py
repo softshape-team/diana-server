@@ -36,6 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "birthdate",
+            "timezone",
             "daily_progress",
             "password",
         )
