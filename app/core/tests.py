@@ -101,6 +101,49 @@ class TasksTest(APITestCase):
             {"name": "Foo", "reminder": timezone.now() + timedelta(days=1)},
         )
         self.assertEqual(res.status_code, 201)
+        self.assertEqual(len(res.data["tags"]), 0)
+
+        res = sclient.post(
+            rvs("task-list"),
+            {
+                "name": "Foo",
+                "reminder": timezone.now() + timedelta(days=1),
+                "with_tags": [uuid.uuid4()],
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+
+        res = sclient.post(
+            rvs("task-list"),
+            {
+                "name": "Foo",
+                "reminder": timezone.now() + timedelta(days=1),
+                "with_tags": [self.tags["rami"][0].pk],
+            },
+        )
+        self.assertEqual(res.status_code, 400)
+
+        res = sclient.post(
+            rvs("task-list"),
+            {
+                "name": "Foo",
+                "reminder": timezone.now() + timedelta(days=1),
+                "with_tags": [self.tags["sami"][0].pk],
+            },
+        )
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(len(res.data["tags"]), 1)
+
+        res = sclient.post(
+            rvs("task-list"),
+            {
+                "name": "Foo",
+                "reminder": timezone.now() + timedelta(days=1),
+                "with_tags": [self.tags["sami"][0].pk, self.tags["sami"][1].pk],
+            },
+        )
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(len(res.data["tags"]), 2)
 
         res = sclient.post(
             rvs("task-list"),
@@ -128,11 +171,6 @@ class TasksTest(APITestCase):
             },
         )
         self.assertEqual(res.status_code, 400)
-
-        ########## List again ####################
-        res = sclient.get(rvs("task-list"))
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(len(res.data["results"]), 2)
 
     def test_task_detail(self):
         """

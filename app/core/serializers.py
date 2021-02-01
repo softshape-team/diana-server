@@ -6,6 +6,22 @@ from . import models
 
 class TaskSerializer(serializers.ModelSerializer):
     done = serializers.BooleanField(default=False, write_only=True)
+    with_tags = serializers.ListField(
+        child=serializers.UUIDField(),
+        write_only=True,
+        required=False,
+    )
+
+    def validate_with_tags(self, with_tags):
+        request = self.context["request"]
+
+        for tag_pk in with_tags:
+            if not models.Tag.objects.filter(pk=tag_pk, user=request.user).exists():
+                raise serializers.ValidationError(
+                    "One or more tags ids is not correct."
+                )
+
+        return with_tags
 
     def validate(self, attrs):
         method = self.context["request"].method
@@ -21,6 +37,21 @@ class TaskSerializer(serializers.ModelSerializer):
 
         return attrs
 
+    def create(self, validated_data):
+        tags_pks = validated_data.pop("with_tags", None)
+
+        task = models.Task.objects.create(**validated_data)
+
+        if not tags_pks:
+            return task
+
+        for tag_pk in tags_pks:
+            tag = models.Tag.objects.get(pk=tag_pk)
+            models.TaskTag.objects.create(task=task, tag=tag)
+
+        task = models.Task.objects.get(pk=task.pk)
+        return task
+
     class Meta:
         model = models.Task
         fields = (
@@ -29,6 +60,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "name",
             "note",
             "tags",
+            "with_tags",
             "datetime",
             "reminder",
             "deadline",
