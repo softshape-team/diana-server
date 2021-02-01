@@ -127,6 +127,7 @@ class TaskTagList(generics.CreateAPIView):
     """
     Get tasktags is not allowed.
     Authed user can create a new tasktag linked with (task, tag) belong to him/her.
+    Authed user can delete a tasktag by providing the task id and the tag id.
     """
 
     serializer_class = serializers.TaskTagSerializer
