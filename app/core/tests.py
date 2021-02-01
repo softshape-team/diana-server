@@ -363,6 +363,7 @@ class TasksTest(APITestCase):
         # Gettings ready
         client, sclient, rclient = self.clients()
 
+        sami_tasktag = self.tasktags["sami"][0]
         sami_task = self.tasks["sami"][0]
         sami_tag = self.tags["sami"][0]
         sami_other_tag = self.tags["sami"][1]
@@ -402,54 +403,31 @@ class TasksTest(APITestCase):
         )
         self.assertEqual(res.status_code, 400)
 
-    def test_task_tag_m2m_detail(self):
-        """
-        Authed user can get, update and delete a task-tag, allowed only for the owner of the of task-tag.
-        """
-
-        # Gettings ready
-        client, sclient, rclient = self.clients()
-
-        sami_tasktag = self.tasktags["sami"][0]
-
-        sami_task = self.tasks["sami"][0]
-        sami_tag = self.tags["sami"][0]
-
-        ########## Retrieve ####################
-        res = client.get(rvs("tasktag-detail", args=[sami_tasktag.pk]))
+        ########## Delete ####################
+        res = client.delete(rvs("tasktag-list"))
         self.assertEqual(res.status_code, 401)
 
-        res = sclient.get(rvs("tasktag-detail", args=[sami_tasktag.pk]))
-        self.assertEqual(res.status_code, 200)
-
-        res = rclient.get(rvs("tasktag-detail", args=[sami_tasktag.pk]))
-        self.assertEqual(res.status_code, 404)
-
-        ########## Update ####################
-        res = client.put(rvs("tasktag-detail", args=[sami_tasktag.pk]))
-        self.assertEqual(res.status_code, 401)
-
-        res = sclient.put(
-            rvs("tasktag-detail", args=[sami_tasktag.pk]),
-            {
-                "task": sami_task.pk,
-                "tag": sami_tag.pk,
-            },
+        res = rclient.delete(
+            rvs(
+                "tasktag-list",
+                params={
+                    "task": sami_tasktag.task.pk,
+                    "tag": sami_tasktag.tag.pk,
+                },
+            )
         )
-        self.assertEqual(res.status_code, 200)
-
-        res = rclient.put(rvs("tasktag-detail", args=[sami_tasktag.pk]))
         self.assertEqual(res.status_code, 404)
 
-        ########## Destroy ####################
-        res = client.delete(rvs("tasktag-detail", args=[sami_tasktag.pk]))
-        self.assertEqual(res.status_code, 401)
-
-        res = sclient.delete(rvs("tasktag-detail", args=[sami_tasktag.pk]))
+        res = sclient.delete(
+            rvs(
+                "tasktag-list",
+                params={
+                    "task": sami_tasktag.task.pk,
+                    "tag": sami_tasktag.tag.pk,
+                },
+            )
+        )
         self.assertEqual(res.status_code, 204)
-
-        res = rclient.delete(rvs("tasktag-detail", args=[sami_tasktag.pk]))
-        self.assertEqual(res.status_code, 404)
 
 
 class HabitTest(APITestCase):

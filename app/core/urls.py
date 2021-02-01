@@ -12,7 +12,6 @@ urlpatterns = [
     path("tag/", views.TagList.as_view(), name="tag-list"),
     path("tag/<str:pk>/", views.TagDetail.as_view(), name="tag-detail"),
     path("tasktag/", views.TaskTagList.as_view(), name="tasktag-list"),
-    path("tasktag/<str:pk>/", views.TaskTagDetail.as_view(), name="tasktag-detail"),
     path("habit/", views.HabitList.as_view(), name="habit-list"),
     path("habit/<str:pk>/", views.HabitDetail.as_view(), name="habit-detail"),
     path("habitlog/", views.HabitLogList.as_view(), name="habitlog-list"),

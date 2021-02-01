@@ -137,19 +137,28 @@ class TaskTagList(generics.CreateAPIView):
         user = self.request.user
         return self.queryset.filter(task__user=user, tag__user=user)
 
+    def delete(self, request):
+        query_params = request.query_params
 
-class TaskTagDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Authed user can get, update and delete a task-tag, allowed only for the owner of the of task-tag.
-    """
+        try:
+            task = models.Task.objects.get(pk=query_params.get("task"))
+            tag = models.Tag.objects.get(pk=query_params.get("tag"))
+            tasktag = models.TaskTag.objects.get(
+                task=task,
+                tag=tag,
+                task__user=request.user,
+                tag__user=request.user,
+            )
 
-    serializer_class = serializers.TaskTagSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = models.TaskTag.objects.all()
+            tasktag.delete()
+            return Response(status=204)
 
-    def get_queryset(self):
-        user = self.request.user
-        return self.queryset.filter(task__user=user, tag__user=user)
+        except (
+            models.Task.DoesNotExist,
+            models.Tag.DoesNotExist,
+            models.TaskTag.DoesNotExist,
+        ):
+            return Response(status=404)
 
 
 class HabitList(generics.ListCreateAPIView):

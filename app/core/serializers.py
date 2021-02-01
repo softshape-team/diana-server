@@ -76,9 +76,9 @@ class TagSerializer(serializers.ModelSerializer):
 
 class TaskTagSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
-        user = self.context["request"].user
+        request = self.context["request"]
 
-        if attrs["task"].user != user or attrs["tag"].user != user:
+        if attrs["task"].user != request.user or attrs["tag"].user != request.user:
             raise serializers.ValidationError(
                 "User should be the owner of the task and the tag."
             )
