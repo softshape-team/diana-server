@@ -29,6 +29,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "name",
             "note",
             "tags",
+            "datetime",
             "reminder",
             "deadline",
             "done_at",
