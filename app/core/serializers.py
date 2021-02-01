@@ -45,6 +45,14 @@ class SubtaskSerializer(serializers.ModelSerializer):
 
         return task
 
+    def validate_done(self, done):
+        if self.context["request"].method == "POST" and done:
+            raise serializers.ValidationError(
+                "Done field can not be set on POST request."
+            )
+
+        return done
+
     class Meta:
         model = models.Subtask
         fields = "__all__"

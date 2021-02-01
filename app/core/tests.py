@@ -211,6 +211,11 @@ class TasksTest(APITestCase):
         res = sclient.post(rvs("subtask-list"), {"task": st0.pk, "name": "Foo"})
         self.assertEqual(res.status_code, 201)
 
+        res = sclient.post(
+            rvs("subtask-list"), {"task": st0.pk, "name": "Something new", "done": True}
+        )
+        self.assertEqual(res.status_code, 400)
+
         res = rclient.post(rvs("subtask-list"), {"task": st0.pk, "name": "Bar"})
         self.assertEqual(res.status_code, 400)
 
