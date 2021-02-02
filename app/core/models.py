@@ -69,7 +69,7 @@ class Task(Base):
     name = models.CharField(max_length=256)
     note = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, related_name="tasks", through="TaskTag")
-    datetime = models.DateTimeField(null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
     reminder = models.DateTimeField(
         null=True, blank=True, validators=[FutureDateTimeValidator()]
     )

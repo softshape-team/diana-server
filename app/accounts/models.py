@@ -32,6 +32,7 @@ class User(AbstractUser):
     is_superuser = models.BooleanField(default=False)
 
     timezone = models.CharField(max_length=32, null=True, blank=True)
+    image = models.ImageField(upload_to="profile_images", null=True, blank=True)
 
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
