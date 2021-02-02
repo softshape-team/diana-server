@@ -38,7 +38,7 @@ class User(AbstractUser):
     date_joined = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["email"]
 
     def clean(self, *args, **kwargs):
         self.email = self.email.lower()
