@@ -1,5 +1,6 @@
-from django.http import HttpResponse
 from django.views import View
+from django.shortcuts import render
+
 
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +13,7 @@ from .functions import task_pk_validator
 
 class Index(View):
     def get(self, request):
-        return HttpResponse("Welcome to diana API")
+        return render(request, "core/index.html")
 
 
 class TaskList(generics.ListCreateAPIView):
