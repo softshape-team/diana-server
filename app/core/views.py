@@ -1,8 +1,9 @@
+from django.db.models import query
 from django.views import View
 from django.shortcuts import render
 
 
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -16,10 +17,10 @@ class Index(View):
         return render(request, "core/index.html")
 
 
-class TaskList(generics.ListCreateAPIView):
+class TaskViewSet(viewsets.ModelViewSet):
     """
-    Authed user can get its own tasks only.
-    Authed user can add new task to his account only.
+    LC: authed user can do LC to his account only.
+    RUD: authed user can do RUD for his/her tasks only.
     """
 
     serializer_class = serializers.TaskSerializer
@@ -33,23 +34,10 @@ class TaskList(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
+class SubtaskViewSet(viewsets.ModelViewSet):
     """
-    Authed user can only (access, update, delete) his/her task.
-    """
-
-    serializer_class = serializers.TaskSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = models.Task.objects.all()
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
-
-
-class SubtaskList(generics.ListCreateAPIView):
-    """
-    Authed user can get his/her subtask only.
-    Authed user can add to its checklist.
+    LC: authed user can do LC to his account only.
+    RUD: authed user can do RUD to his/her subtasks only.
     """
 
     serializer_class = serializers.SubtaskSerializer
@@ -68,28 +56,10 @@ class SubtaskList(generics.ListCreateAPIView):
         return super().perform_create(serializer)
 
 
-class SubtaskDetail(generics.RetrieveUpdateDestroyAPIView):
+class TagViewSet(viewsets.ModelViewSet):
     """
-    Authed user can Get, Update, Delete a only his/her task's subtasks.
-    """
-
-    serializer_class = serializers.SubtaskSerializer
-    permission_classes = (IsAuthenticated, OwnSubtask)
-    queryset = models.Subtask.objects.all()
-
-    def get_queryset(self):
-        res = self.queryset.filter(task__user=self.request.user)
-        task = self.request.query_params.get("task")
-        if task:
-            res = res.filter(task=task)
-
-        return res
-
-
-class TagList(generics.ListCreateAPIView):
-    """
-    Authed user can get his/her tags only.
-    Authed user can add a new tag to his account only.
+    LC: authed user can do LC to his account only.
+    RUD: authed user can do RUD to his account only.
     """
 
     serializer_class = serializers.TagSerializer
@@ -103,24 +73,57 @@ class TagList(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class TagDetail(generics.RetrieveUpdateDestroyAPIView):
+class HabitViewSet(viewsets.ModelViewSet):
     """
-    Authed user can retrieve, update and delete his/her tags only.
+    LC: authed user can do LC to his account only.
+    RUD: authed user can do RUD to his account only.
     """
 
-    serializer_class = serializers.TagSerializer
+    serializer_class = serializers.HabitSerializer
     permission_classes = (IsAuthenticated,)
-    queryset = models.Tag.objects.all()
+    queryset = models.Habit.objects.all()
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
-class TaskTagList(generics.CreateAPIView):
+
+class HabitLogViewSet(viewsets.ModelViewSet):
     """
-    Get tasktags is not allowed.
-    Authed user can create a new tasktag linked with (task, tag) belong to him/her.
-    Authed user can delete a tasktag by providing the task id and the tag id.
+    LC: authed user can LC to his account only.
+    filtering supported: specify habit=pk to filter habitlog by the habit.
+    """
+
+    serializer_class = serializers.HabitLogSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = models.HabitLog.objects.all()
+
+    def get_queryset(self):
+        res = self.queryset.filter(habit__user=self.request.user)
+        params = self.request.query_params
+        if "habit" in params:
+            res = res.filter(habit=params["habit"])
+
+        return res
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=405)
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=405)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=405)
+
+
+class TaskTagViewSet(viewsets.ModelViewSet):
+    """
+    L: not allowed.
+    C: authed user can create a new tasktag linked with (task, tag) belong to him/her.
+    D: Customize deletion allowed where authed user can delete a task
+    by providing the task id and the tag id as URLs params.
     """
 
     serializer_class = serializers.TaskTagSerializer
@@ -154,52 +157,14 @@ class TaskTagList(generics.CreateAPIView):
         ):
             return Response(status=404)
 
+    def list(self, request, *args, **kwargs):
+        return Response(status=405)
 
-class HabitList(generics.ListCreateAPIView):
-    """
-    Authed user can list his habits only.
-    Authed user can create a new habit associate with his account only.
-    """
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=405)
 
-    serializer_class = serializers.HabitSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = models.Habit.objects.all()
+    def update(self, request, *args, **kwargs):
+        return Response(status=405)
 
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-class HabitDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Authed user can (retrieve, update, delete) his habits only.
-    """
-
-    serializer_class = serializers.HabitSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = models.Habit.objects.all()
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
-
-
-class HabitLogList(generics.ListCreateAPIView):
-    """
-    Authed user can list his habitlog only.
-    Authed user can create a new habit log => This is equal to mark a habit as paracticed.
-    filtering supported: specify habit=pk to filter habitlog by the habit.
-    """
-
-    serializer_class = serializers.HabitLogSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = models.HabitLog.objects.all()
-
-    def get_queryset(self):
-        res = self.queryset.filter(habit__user=self.request.user)
-        params = self.request.query_params
-        if "habit" in params:
-            res = res.filter(habit=params["habit"])
-
-        return res
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=405)

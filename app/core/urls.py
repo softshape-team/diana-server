@@ -1,18 +1,21 @@
 from django.urls import path
 
+from rest_framework.routers import DefaultRouter
+
 from . import views
 
 
 urlpatterns = [
     path("", views.Index.as_view(), name="index"),
-    path("task/", views.TaskList.as_view(), name="task-list"),
-    path("task/<str:pk>/", views.TaskDetail.as_view(), name="task-detail"),
-    path("subtask/", views.SubtaskList.as_view(), name="subtask-list"),
-    path("subtask/<str:pk>/", views.SubtaskDetail.as_view(), name="subtask-detail"),
-    path("tag/", views.TagList.as_view(), name="tag-list"),
-    path("tag/<str:pk>/", views.TagDetail.as_view(), name="tag-detail"),
-    path("tasktag/", views.TaskTagList.as_view(), name="tasktag-list"),
-    path("habit/", views.HabitList.as_view(), name="habit-list"),
-    path("habit/<str:pk>/", views.HabitDetail.as_view(), name="habit-detail"),
-    path("habitlog/", views.HabitLogList.as_view(), name="habitlog-list"),
 ]
+
+router = DefaultRouter()
+
+router.register(r"task", views.TaskViewSet, basename="task")
+router.register(r"subtask", views.SubtaskViewSet, basename="subtask")
+router.register(r"tag", views.TagViewSet, basename="tag")
+router.register(r"habit", views.HabitViewSet, basename="habit")
+router.register(r"habitlog", views.HabitLogViewSet, basename="habitlog")
+router.register(r"tasktag", views.TaskTagViewSet, basename="tasktag")
+
+urlpatterns += router.urls
