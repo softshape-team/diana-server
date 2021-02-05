@@ -223,7 +223,7 @@ class TasksTest(APITestCase):
 
     def test_subtask_list(self):
         """
-        Authed user can get his/her task's checklist by specifing the task as URL parameter.
+        Authed user can get his/her subtask only.
         Authed user can add to its checklist.
         """
 
@@ -235,12 +235,9 @@ class TasksTest(APITestCase):
         res = client.get(rvs("subtask-list"))
         self.assertEqual(res.status_code, 401)
 
-        res = sclient.get(rvs("subtask-list", params={"task": st0.pk}))
+        res = sclient.get(rvs("subtask-list"))
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.data["results"]), 1)
-
-        res = rclient.get(rvs("subtask-list", params={"task": st0.pk}))
-        self.assertEqual(res.status_code, 404)
 
         ########## Create ####################
         res = client.post(rvs("subtask-list"))

@@ -48,7 +48,7 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class SubtaskList(generics.ListCreateAPIView):
     """
-    Authed user can get his/her task's checklist by specifing the task as URL parameter.
+    Authed user can get his/her subtask only.
     Authed user can add to its checklist.
     """
 
@@ -57,8 +57,7 @@ class SubtaskList(generics.ListCreateAPIView):
     queryset = models.Subtask.objects.all()
 
     def get_queryset(self):
-        task = self.request.query_params.get("task")
-        return self.queryset.filter(task__user=self.request.user).filter(task=task)
+        return self.queryset.filter(task__user=self.request.user)
 
     def perform_create(self, serializer):
         if self.request.method in ("PUT", "PATCH"):
@@ -67,13 +66,6 @@ class SubtaskList(generics.ListCreateAPIView):
             return
 
         return super().perform_create(serializer)
-
-    def list(self, request, *args, **kwargs):
-        task_pk = self.request.query_params.get("task")
-        if not task_pk_validator(request, task_pk):
-            return Response(status=404)
-
-        return super().list(request, *args, **kwargs)
 
 
 class SubtaskDetail(generics.RetrieveUpdateDestroyAPIView):
