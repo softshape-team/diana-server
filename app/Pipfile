@@ -6,17 +6,16 @@ name = "pypi"
 [packages]
 django = "*"
 gunicorn = "*"
-black = "==20.8b1"
 djangorestframework = "*"
 dj-rest-auth = "*"
 djangorestframework-simplejwt = "*"
 drf-spectacular = "*"
 psycopg2-binary = "*"
 django-better-admin-arrayfield = "*"
-pillow = "*"
 
 [dev-packages]
 pylint-django = "*"
+black = "==20.8b1"
 
 [requires]
 python_version = "3.9"
