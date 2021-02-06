@@ -12,6 +12,7 @@ djangorestframework-simplejwt = "*"
 drf-spectacular = "*"
 psycopg2-binary = "*"
 django-better-admin-arrayfield = "*"
+pillow = "*"
 
 [dev-packages]
 pylint-django = "*"
