@@ -36,13 +36,14 @@ def update_daily_progress(user):
     Update user's daily progress
     """
 
-    today_tasks = Task.objects.filter(user=user, date=timezone.now())
+    today_tasks = Task.objects.filter(user=user, date=timezone.now().date())
+    if not today_tasks.count():
+        return
+
     todo = today_tasks.filter(done_at__isnull=True).count()
     done = today_tasks.filter(done_at__isnull=False).count()
 
-    user.daily_progress = (todo / (todo + done)) * 100
+    user.daily_progress = (done / (todo + done)) * 100
     user.save()
-
-    print("========================= Hi =========================")
 
     return user.daily_progress
