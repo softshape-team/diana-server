@@ -50,7 +50,7 @@ class UserAdmin(BaseUserAdmin):
         (
             "Other",
             {
-                "fields": ("daily_progress", "timezone"),
+                "fields": ("daily_progress", "timezone", "image"),
             },
         ),
     )
