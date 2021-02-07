@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.urls import reverse
 from .models import Task
 
@@ -28,3 +29,20 @@ def task_pk_validator(request, task_pk):
         return False
 
     return True
+
+
+def update_daily_progress(user):
+    """
+    Update user's daily progress
+    """
+
+    today_tasks = Task.objects.filter(user=user, date=timezone.now())
+    todo = today_tasks.filter(done_at__isnull=True).count()
+    done = today_tasks.filter(done_at__isnull=False).count()
+
+    user.daily_progress = (todo / (todo + done)) * 100
+    user.save()
+
+    print("========================= Hi =========================")
+
+    return user.daily_progress

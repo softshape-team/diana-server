@@ -24,7 +24,7 @@ class User(AbstractUser):
 
     birthdate = models.DateField(null=True, blank=True)
     daily_progress = models.FloatField(
-        default=0, validators=[BothIncludedRangeValidator(0, 100)]
+        default=100, validators=[BothIncludedRangeValidator(0, 100)]
     )
 
     is_active = models.BooleanField(default=True)

@@ -11,7 +11,6 @@ class TaskTagAdmin(admin.TabularInline):
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
-    readonly_fields = ["done_at"]
     inlines = [TaskTagAdmin]
 
 
