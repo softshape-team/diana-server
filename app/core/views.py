@@ -3,18 +3,21 @@ from django.views import View
 from django.shortcuts import render
 
 
-from rest_framework import generics, viewsets
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from . import serializers, models
-from .permissions import OwnSubtask
-from .functions import task_pk_validator
 
 
-class Index(View):
-    def get(self, request):
-        return render(request, "core/index.html")
+class Index(viewsets.ViewSet):
+    def list(self, request, *args, **kwargs):
+        return Response(
+            {
+                "message": "Welcome to diana api.",
+            },
+            status=200,
+        )
 
 
 class TaskViewSet(viewsets.ModelViewSet):
