@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { Card, Container, Row, Col } from "react-bootstrap";
 import cn from "classnames";
 
@@ -8,6 +9,9 @@ interface HomeProps {}
 const Home: React.FC<HomeProps> = () => {
   return (
     <div>
+      <Head>
+        <title>Diana - A Task Assistant</title>
+      </Head>
       <Container fluid>
         <Row className="justify-content-center">
           <Card as={Col} md={6} className={cn(style.card)}>
@@ -20,10 +24,12 @@ const Home: React.FC<HomeProps> = () => {
               To contribute on diana project checkout our source code
               <ul className={style.sourceCodeLinks}>
                 <li>
-                  <a href="#">Diana web</a>
+                  <a href="https://github.com/softshapeorg/diana">Diana web</a>
                 </li>
                 <li>
-                  <a href="#">Diana mobile</a>
+                  <a href="https://github.com/softshapeorg/diana-mobile">
+                    Diana mobile
+                  </a>
                 </li>
               </ul>
             </Card.Body>
