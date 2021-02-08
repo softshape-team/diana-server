@@ -9,6 +9,10 @@ services:
     depends_on:
       - db
 
+  interface:
+    build: ./interface
+    container_name: interface
+
   db:
     image: postgres
     container_name: db

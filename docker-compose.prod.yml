@@ -23,6 +23,11 @@ services:
     env_file:
       - .env
 
+  interface:
+    command: npm run start
+    ports:
+      - 3000:3000
+
   db:
     env_file:
       - .env
