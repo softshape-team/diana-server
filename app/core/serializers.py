@@ -6,8 +6,14 @@ from . import models
 
 class TaskSerializer(serializers.ModelSerializer):
     done = serializers.BooleanField(default=False, write_only=True)
+    checklist = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     with_tags = serializers.ListField(
         child=serializers.UUIDField(),
+        write_only=True,
+        required=False,
+    )
+    with_subtasks = serializers.ListField(
+        child=serializers.CharField(max_length=64),
         write_only=True,
         required=False,
     )
@@ -38,16 +44,17 @@ class TaskSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        tags_pks = validated_data.pop("with_tags", None)
+        tags_pks = validated_data.pop("with_tags", [])
+        subtasks_names = validated_data.pop("with_subtasks", [])
 
         task = models.Task.objects.create(**validated_data)
-
-        if not tags_pks:
-            return task
 
         for tag_pk in tags_pks:
             tag = models.Tag.objects.get(pk=tag_pk)
             models.TaskTag.objects.create(task=task, tag=tag)
+
+        for subtask_name in subtasks_names:
+            models.Subtask.objects.create(task=task, name=subtask_name)
 
         task = models.Task.objects.get(pk=task.pk)
         return task
@@ -60,7 +67,9 @@ class TaskSerializer(serializers.ModelSerializer):
             "name",
             "note",
             "tags",
+            "checklist",
             "with_tags",
+            "with_subtasks",
             "date",
             "reminder",
             "deadline",
@@ -68,7 +77,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "priority",
             "done",
         )
-        read_only_fields = ("pk", "user", "tags", "done_at")
+        read_only_fields = ("pk", "user", "tags", "checklist", "done_at")
 
 
 class SubtaskSerializer(serializers.ModelSerializer):
