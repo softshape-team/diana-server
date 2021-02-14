@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { Card, Container, Row, Col } from "react-bootstrap";
 import cn from "classnames";
+import withAuthenticate from "../components/withAuthenticate";
 
 import style from "./main.module.scss";
 
@@ -43,4 +44,4 @@ const Home: React.FC<HomeProps> = () => {
   );
 };
 
-export default Home;
+export default withAuthenticate(Home);
