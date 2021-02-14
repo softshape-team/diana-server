@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Col, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { connect } from "react-redux";
 import { loginRequest } from "../redux/actions/user";
 import { Credentials } from "../tstypes";
@@ -14,27 +14,31 @@ const Login: React.FC<LoginProps> = (props) => {
 
   return (
     <div>
-      <Form as={Col} lg={6}>
-        <Form.Group>
-          <Form.Label>Username</Form.Label>
-          <Form.Control
-            type="text"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-          />
-        </Form.Group>
-        <Form.Group>
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-        </Form.Group>
-        <Button onClick={() => props.login({ username, password })}>
-          Login
-        </Button>
-      </Form>
+      <Container>
+        <Row className="justify-content-center">
+          <Form as={Col} lg={6}>
+            <Form.Group>
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </Form.Group>
+            <Button onClick={() => props.login({ username, password })}>
+              Login
+            </Button>
+          </Form>
+        </Row>
+      </Container>
     </div>
   );
 };
