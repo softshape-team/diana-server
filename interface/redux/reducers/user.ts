@@ -22,6 +22,11 @@ const reducer = (state = init, action: Action) => {
       };
 
     case types.LOGIN_SUCCEED:
+      const accessToken = action.payload.accessToken;
+      const refreshToken = action.payload.refreshToken;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
       return {
         ...init,
         isAuthed: true,
