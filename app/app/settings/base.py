@@ -143,3 +143,16 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        hours=os.getenv("ACCESS_TOKEN_LIFETIME_HOURS", 0),
+        minutes=os.getenv("ACCESS_TOKEN_LIFETIME_MINUTES", 5),
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=os.getenv("REFRESH_TOKEN_LIFETIME_DAYS", 1),
+        hours=os.getenv("REFRESH_TOKEN_LIFETIME_HOURS", 0),
+        minutes=os.getenv("REFRESH_TOKEN_LIFETIME_MINUTES", 0),
+    ),
+    "ROTATE_REFRESH_TOKENS": os.getenv("ROTATE_REFRESH_TOKENS", 0),
+}
