@@ -4,10 +4,13 @@ import cn from "classnames";
 import withAuthenticate from "../components/withAuthenticate";
 
 import style from "./main.module.scss";
+import { connect } from "react-redux";
 
-interface HomeProps {}
+interface HomeProps {
+  user: any;
+}
 
-const Home: React.FC<HomeProps> = () => {
+const Home: React.FC<HomeProps> = (props) => {
   return (
     <div>
       <Head>
@@ -35,7 +38,11 @@ const Home: React.FC<HomeProps> = () => {
               </ul>
             </Card.Body>
             <Card.Footer>
-              Created by <a href="https://softshape.org">Softshape</a>
+              Created by <a href="https://softshape.org">Softshape</a>{" "}
+              <span>
+                {!!props.user.isAuthed && "Authed"}
+                {!props.user.isAuthed && "Not authed"}
+              </span>
             </Card.Footer>
           </Card>
         </Row>
@@ -44,4 +51,13 @@ const Home: React.FC<HomeProps> = () => {
   );
 };
 
-export default withAuthenticate(Home);
+const mapStateToProps = (state: any) => ({
+  user: state.user,
+});
+
+const mapDispatchToProps = (dispatch: Function) => ({});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withAuthenticate(Home));

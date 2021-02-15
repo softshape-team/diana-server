@@ -60,6 +60,10 @@ const authenticateByTokens = () => async (dispatch: Function) => {
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
 
+    if (!accessToken || !refreshToken) {
+      return false;
+    }
+
     try {
       const res = await axios.get(`${base}/accounts/user/`, {
         headers: {
@@ -80,6 +84,10 @@ const authenticateByTokens = () => async (dispatch: Function) => {
   const refreshTokenRequest = async () => {
     let accessToken = localStorage.getItem("accessToken");
     let refreshToken = localStorage.getItem("refreshToken");
+
+    if (!accessToken || !refreshToken) {
+      return false;
+    }
 
     try {
       const res = await axios.post(`${base}/accounts/token/refresh/`, {
