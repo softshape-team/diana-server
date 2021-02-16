@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { connect } from "react-redux";
-import { loginRequest } from "../redux/actions/user";
-import { Credentials } from "../tstypes";
+import { loginRequest } from "../../redux/actions/user";
+import { Credentials } from "../../tstypes";
 
 interface LoginProps {
   login: Function;
