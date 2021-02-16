@@ -1,8 +1,9 @@
-import axios from "axios";
-import { request } from "http";
+import baseAxios from "axios";
 import { ActionTypes, Action, Credentials } from "../../tstypes";
 
-const base = "http://localhost:8000";
+const axios = baseAxios.create({
+  baseURL: "http://localhost:8000",
+});
 
 const types: ActionTypes = {
   LOGIN_REQUESTED: "Login request has been sent.",
@@ -38,7 +39,7 @@ const loginRequest = (cred: Credentials) => async (dispatch: Function) => {
   dispatch(loginRequested());
 
   try {
-    const res = await axios.post(`${base}/accounts/login/`, {
+    const res = await axios.post("/accounts/login/", {
       username: cred.username,
       password: cred.password,
     });
@@ -65,7 +66,7 @@ const authenticateByTokens = () => async (dispatch: Function) => {
     }
 
     try {
-      const res = await axios.get(`${base}/accounts/user/`, {
+      const res = await axios.get("/accounts/user/", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -90,7 +91,7 @@ const authenticateByTokens = () => async (dispatch: Function) => {
     }
 
     try {
-      const res = await axios.post(`${base}/accounts/token/refresh/`, {
+      const res = await axios.post("/accounts/token/refresh/", {
         refresh: refreshToken,
       });
 
