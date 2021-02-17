@@ -22,10 +22,10 @@ const registrationSucceed = (user: object): Action => ({
   },
 });
 
-const registrationField = (err: any): Action => ({
+const registrationField = (errs: any): Action => ({
   type: types.REGISTRATION_FAILED,
   payload: {
-    err,
+    errs: errs.response.data,
   },
 });
 

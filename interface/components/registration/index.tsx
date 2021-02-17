@@ -5,8 +5,10 @@ import { registrationRequest } from "../../redux/actions/registration";
 
 import { userObject } from "../../tstypes";
 import { useRouter } from "next/router";
+import style from "./main.module.scss";
 
 interface RegistrationProps {
+  registration: any;
   register: Function;
 }
 
@@ -38,7 +40,7 @@ const Registration: React.FC<RegistrationProps> = (props) => {
   return (
     <Container fluid>
       <Row className="justify-content-center">
-        <Form>
+        <Form className={style.form} as={Col} xs={10}>
           <Form.Row>
             <Form.Group as={Col} xs={6}>
               <Form.Label>First Name</Form.Label>
@@ -47,7 +49,13 @@ const Registration: React.FC<RegistrationProps> = (props) => {
                 value={user.firstName}
                 placeholder="First Name"
                 onChange={ChangeHandler}
+                isInvalid={
+                  props.registration.errs && props.registration.errs.first_name
+                }
               />
+              <Form.Control.Feedback type="invalid">
+                {props.registration.errs && props.registration.errs.first_name}
+              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col} xs={6}>
               <Form.Label>Last Name</Form.Label>
@@ -56,7 +64,13 @@ const Registration: React.FC<RegistrationProps> = (props) => {
                 value={user.lastName}
                 placeholder="Last Name"
                 onChange={ChangeHandler}
+                isInvalid={
+                  props.registration.errs && props.registration.errs.last_name
+                }
               />
+              <Form.Control.Feedback type="invalid">
+                {props.registration.errs && props.registration.errs.last_name}
+              </Form.Control.Feedback>
             </Form.Group>
           </Form.Row>
 
@@ -67,7 +81,13 @@ const Registration: React.FC<RegistrationProps> = (props) => {
               value={user.username}
               placeholder="Username"
               onChange={ChangeHandler}
+              isInvalid={
+                props.registration.errs && props.registration.errs.username
+              }
             />
+            <Form.Control.Feedback type="invalid">
+              {props.registration.errs && props.registration.errs.username}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group>
@@ -78,7 +98,13 @@ const Registration: React.FC<RegistrationProps> = (props) => {
               value={user.email}
               placeholder="Email"
               onChange={ChangeHandler}
+              isInvalid={
+                props.registration.errs && props.registration.errs.email
+              }
             />
+            <Form.Control.Feedback type="invalid">
+              {props.registration.errs && props.registration.errs.email}
+            </Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group>
@@ -89,7 +115,13 @@ const Registration: React.FC<RegistrationProps> = (props) => {
               type="password"
               placeholder="Password"
               onChange={ChangeHandler}
+              isInvalid={
+                props.registration.errs && props.registration.errs.password
+              }
             />
+            <Form.Control.Feedback type="invalid">
+              {props.registration.errs && props.registration.errs.password}
+            </Form.Control.Feedback>
           </Form.Group>
           <Button onClick={submitHandler}>Register</Button>
         </Form>
