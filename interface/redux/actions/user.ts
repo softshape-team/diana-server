@@ -6,9 +6,15 @@ const axios = baseAxios.create({
 });
 
 const types: UserActionTypes = {
+  // Login
   LOGIN_REQUESTED: "Login request has been sent.",
   LOGIN_SUCCEED: "Login request has been succeed.",
   LOGIN_FAILED: "Login request has been failed.",
+
+  // Logout
+  LOGOUT_REQUESTED: "Logout request has been sent.",
+  LOGOUT_SUCCEED: "Logout request has been succeed.",
+  LOGOUT_FAILED: "Logout request has been failed.",
 };
 
 const loginRequested = (): Action => ({
@@ -35,6 +41,21 @@ const loginFailed = (errs: object): Action => ({
   },
 });
 
+const logoutRequested = () => ({
+  type: types.LOGOUT_REQUESTED,
+});
+
+const logoutSucceed = () => ({
+  type: types.LOGOUT_SUCCEED,
+});
+
+const logoutFailed = (errs: object) => ({
+  type: types.LOGOUT_FAILED,
+  payload: {
+    errs: errs,
+  },
+});
+
 const loginRequest = (cred: Credentials) => async (dispatch: Function) => {
   dispatch(loginRequested());
 
@@ -50,8 +71,8 @@ const loginRequest = (cred: Credentials) => async (dispatch: Function) => {
 
     dispatch(loginSucceed(accessToken, refreshToken, user));
     return true;
-  } catch (err) {
-    dispatch(loginFailed(err.response.data));
+  } catch (errs) {
+    dispatch(loginFailed(errs.response.data));
     return false;
   }
 };
@@ -123,11 +144,33 @@ const authenticateByTokens = () => async (dispatch: Function) => {
   }
 };
 
+const logoutRequest = (accessToken: string) => async (dispatch: Function) => {
+  dispatch(logoutRequested());
+  try {
+    const res = await axios.post("/accounts/logout/", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    dispatch(logoutSucceed());
+    return true;
+  } catch (errs) {
+    dispatch(logoutFailed(errs.response.data));
+    return false;
+  }
+};
+
 export default types;
 export {
+  // Login
   loginRequested,
   loginSucceed,
   loginFailed,
   loginRequest,
   authenticateByTokens,
+  // Logout
+  logoutRequested,
+  logoutSucceed,
+  logoutFailed,
+  logoutRequest,
 };

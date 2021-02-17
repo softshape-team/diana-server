@@ -46,6 +46,30 @@ const reducer = (state = init, action: Action) => {
         user: null,
         errs: action.payload.errs,
       };
+
+    case types.LOGOUT_REQUESTED:
+      return {
+        ...state,
+        isLoading: true,
+      };
+
+    case types.LOGOUT_SUCCEED:
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      return {
+        ...state,
+        isAuthed: null,
+        accessToken: null,
+        refreshToken: null,
+        user: null,
+        errs: null,
+      };
+
+    case types.LOGOUT_FAILED:
+      return {
+        ...state,
+        errs: action.payload.errs,
+      };
   }
 };
 

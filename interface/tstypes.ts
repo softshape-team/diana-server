@@ -11,9 +11,15 @@ export interface RegistrationActionTypes {
 }
 
 export interface UserActionTypes {
+  // Login
   LOGIN_REQUESTED: string;
   LOGIN_SUCCEED: string;
   LOGIN_FAILED: string;
+
+  // Logout
+  LOGOUT_REQUESTED: string;
+  LOGOUT_SUCCEED: string;
+  LOGOUT_FAILED: string;
 }
 
 export interface Payload {

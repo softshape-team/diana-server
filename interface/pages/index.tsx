@@ -1,16 +1,22 @@
 import Head from "next/head";
-import { Card, Container, Row, Col } from "react-bootstrap";
+import { connect } from "react-redux";
+import { Card, Container, Row, Col, Button } from "react-bootstrap";
 import cn from "classnames";
 import withAuthenticate from "../components/withAuthenticate";
+import { logoutRequest } from "../redux/actions/user";
 
 import style from "./main.module.scss";
-import { connect } from "react-redux";
 
 interface HomeProps {
   user: any;
+  logout: Function;
 }
 
 const Home: React.FC<HomeProps> = (props) => {
+  const logoutHandler = async () => {
+    await props.logout(props.user.accessToken);
+  };
+
   return (
     <div>
       <Head>
@@ -43,6 +49,7 @@ const Home: React.FC<HomeProps> = (props) => {
                 {!!props.user.isAuthed && "Authed"}
                 {!props.user.isAuthed && "Not authed"}
               </span>
+              <Button onClick={logoutHandler}>Logout</Button>
             </Card.Footer>
           </Card>
         </Row>
@@ -55,7 +62,9 @@ const mapStateToProps = (state: any) => ({
   user: state.user,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({});
+const mapDispatchToProps = (dispatch: Function) => ({
+  logout: (accessToken: string) => dispatch(logoutRequest(accessToken)),
+});
 
 export default connect(
   mapStateToProps,
