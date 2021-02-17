@@ -1,11 +1,12 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { Container, Form, Button } from "react-bootstrap";
+import { Container, Form, Button, Alert } from "react-bootstrap";
 import { connect } from "react-redux";
 import { loginRequest } from "../../redux/actions/user";
 import { Credentials } from "../../tstypes";
 
 interface LoginProps {
+  user: any;
   login: Function;
 }
 
@@ -26,6 +27,9 @@ const Login: React.FC<LoginProps> = (props) => {
     <div>
       <Container>
         <Form>
+          <Alert variant="danger" hidden={!props.user.errs}>
+            Unable to login with the given credentials
+          </Alert>
           <Form.Group>
             <Form.Label>Username</Form.Label>
             <Form.Control
