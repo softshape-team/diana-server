@@ -1,9 +1,5 @@
 import baseAxios from "axios";
-import {
-  RegistrationActionTypes,
-  Action,
-  user as userObject,
-} from "../../tstypes";
+import { RegistrationActionTypes, Action, User } from "../../tstypes";
 
 const axios = baseAxios.create({
   baseURL: "http://localhost:8000",
@@ -33,9 +29,7 @@ const registrationField = (errs: any): Action => ({
   },
 });
 
-const registrationRequest = (userData: userObject) => async (
-  dispatch: Function
-) => {
+const registrationRequest = (userData: User) => async (dispatch: Function) => {
   dispatch(registrationRequested());
 
   try {

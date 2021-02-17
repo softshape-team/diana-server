@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { registrationRequest } from "../../redux/actions/registration";
 
-import { user as userObject } from "../../tstypes";
+import { User } from "../../tstypes";
 import { useRouter } from "next/router";
 import style from "./main.module.scss";
 
@@ -135,7 +135,7 @@ const mapStateToProps = (state: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  register: (user: userObject) => dispatch(registrationRequest(user)),
+  register: (user: User) => dispatch(registrationRequest(user)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Registration);
