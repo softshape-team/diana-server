@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { registrationRequest } from "../../redux/actions/registration";
 
-import { userObject } from "../../tstypes";
+import { user as userObject } from "../../tstypes";
 import { useRouter } from "next/router";
 import style from "./main.module.scss";
 

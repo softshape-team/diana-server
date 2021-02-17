@@ -1,5 +1,9 @@
 import baseAxios from "axios";
-import { RegistrationActionTypes, Action, userObject } from "../../tstypes";
+import {
+  RegistrationActionTypes,
+  Action,
+  user as userObject,
+} from "../../tstypes";
 
 const axios = baseAxios.create({
   baseURL: "http://localhost:8000",

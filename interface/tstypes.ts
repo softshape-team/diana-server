@@ -30,7 +30,7 @@ export interface Credentials {
   password: string;
 }
 
-export interface userObject {
+export interface user {
   firstName: string;
   lastName: string;
   username: string;
