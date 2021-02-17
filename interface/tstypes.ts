@@ -10,6 +10,12 @@ export interface RegistrationActionTypes {
   REGISTRATION_FAILED: string;
 }
 
+export interface UserActionTypes {
+  LOGIN_REQUESTED: string;
+  LOGIN_SUCCEED: string;
+  LOGIN_FAILED: string;
+}
+
 export interface Payload {
   [key: string]: any;
 }

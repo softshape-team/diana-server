@@ -1,11 +1,11 @@
 import baseAxios from "axios";
-import { ActionTypes, Action, Credentials } from "../../tstypes";
+import { UserActionTypes, Action, Credentials } from "../../tstypes";
 
 const axios = baseAxios.create({
   baseURL: "http://localhost:8000",
 });
 
-const types: ActionTypes = {
+const types: UserActionTypes = {
   LOGIN_REQUESTED: "Login request has been sent.",
   LOGIN_SUCCEED: "Login request has been succeed.",
   LOGIN_FAILED: "Login request has been failed.",
