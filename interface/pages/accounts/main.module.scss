@@ -3,7 +3,7 @@
 @import "../../node_modules/bootstrap/scss/variables";
 
 .displayNone {
-  @include media-breakpoint-down(xs) {
+  @include media-breakpoint-down(sm) {
     display: none;
   }
 }
@@ -15,6 +15,17 @@
     .description {
       background-color: #e5d6fd;
       height: 100%;
+    }
+    .form {
+      width: 100%;
+
+      .formContainer {
+        height: 100%;
+        display: grid;
+        align-content: center;
+        width: 100%;
+        margin-top: -10%;
+      }
     }
   }
 }

@@ -28,8 +28,8 @@ const Accounts: React.FC<AccountsProps> = (props) => {
         <Col xs={6} className={cn(style.description, style.displayNone)}>
           <h1>Welcome to Diana</h1>
         </Col>
-        <Col xs={6} className={style.form}>
-          {FormComponent}
+        <Col xs={12} md={6} className={style.form}>
+          <div className={style.formContainer}>{FormComponent}</div>
         </Col>
       </Row>
     </Container>

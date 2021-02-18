@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { Container, Form, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
 import { connect } from "react-redux";
 import { loginRequest } from "../../redux/actions/user";
 import { Credentials } from "../../tstypes";
@@ -26,28 +26,34 @@ const Login: React.FC<LoginProps> = (props) => {
   return (
     <div>
       <Container>
-        <Form>
-          <Alert variant="danger" hidden={!props.user.errs}>
-            Unable to login with the given credentials
-          </Alert>
-          <Form.Group>
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </Form.Group>
-          <Button onClick={submitHandler}>Login</Button>
-        </Form>
+        <Row className="justify-content-center">
+          <Form as={Col} xs={10}>
+            <Alert variant="danger" hidden={!props.user.errs}>
+              Unable to login with the given credentials
+            </Alert>
+            <Form.Group>
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                value={username}
+                placeholder="Username"
+                onChange={(event) => setUsername(event.target.value)}
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={password}
+                placeholder="Password"
+                onChange={(event) => setPassword(event.target.value)}
+              />
+            </Form.Group>
+            <Button onClick={submitHandler} block>
+              Login
+            </Button>
+          </Form>
+        </Row>
       </Container>
     </div>
   );

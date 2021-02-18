@@ -123,7 +123,9 @@ const Registration: React.FC<RegistrationProps> = (props) => {
               {props.registration.errs && props.registration.errs.password}
             </Form.Control.Feedback>
           </Form.Group>
-          <Button onClick={submitHandler}>Register</Button>
+          <Button onClick={submitHandler} block>
+            Register
+          </Button>
         </Form>
       </Row>
     </Container>
