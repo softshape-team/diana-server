@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { connect } from "react-redux";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 
@@ -21,25 +22,36 @@ const NavBar: React.FC<NavBarProps> = (props) => {
 
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link href="#tasks">Tasks</Nav.Link>
-            <Nav.Link href="#habits">Habits</Nav.Link>
+            <Link href="/tasks" passHref>
+              <Nav.Link>Tasks</Nav.Link>
+            </Link>
+            <Link href="/habits" passHref>
+              <Nav.Link>Habits</Nav.Link>
+            </Link>
           </Nav>
           <Nav>
             {props.user.isAuthed && (
               <NavDropdown title="User" id="collasible-nav-dropdown">
-                <NavDropdown.Item href="#/accounts/profile">
-                  Profile
-                </NavDropdown.Item>
+                <Link href="#/accounts/profile" passHref>
+                  <NavDropdown.Item href="#/accounts/profile">
+                    Profile
+                  </NavDropdown.Item>
+                </Link>
+
                 <NavDropdown.Item onClick={logoutHandler}>
                   Logout
                 </NavDropdown.Item>
               </NavDropdown>
             )}
             {!props.user.isAuthed && (
-              <Nav.Link href="/accounts/login">Login</Nav.Link>
+              <Link href="/accounts/login" passHref>
+                <Nav.Link>Login</Nav.Link>
+              </Link>
             )}
             {!props.user.isAuthed && (
-              <Nav.Link href="/accounts/registration">Registration</Nav.Link>
+              <Link href="/accounts/registration" passHref>
+                <Nav.Link>Registration</Nav.Link>
+              </Link>
             )}
           </Nav>
         </Navbar.Collapse>
