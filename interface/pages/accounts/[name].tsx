@@ -6,6 +6,7 @@ import cn from "classnames";
 
 import Login from "../../components/login";
 import Registration from "../../components/registration";
+import { withRoot, withAuthenticate } from "../../components/hoc";
 
 interface AccountsProps {}
 
@@ -52,4 +53,4 @@ const Accounts: React.FC<AccountsProps> = (props) => {
   );
 };
 
-export default Accounts;
+export default withRoot(Accounts);
