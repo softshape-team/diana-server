@@ -34,7 +34,7 @@ const loginSucceed = (
   },
 });
 
-const loginFailed = (errs: object): Action => ({
+const loginFailed = (errs: object | null): Action => ({
   type: types.LOGIN_FAILED,
   payload: {
     errs,
@@ -78,6 +78,7 @@ const loginRequest = (cred: Credentials) => async (dispatch: Function) => {
 };
 
 const authenticateByTokens = () => async (dispatch: Function) => {
+  dispatch(loginRequested());
   const requestUser = async () => {
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
@@ -129,7 +130,7 @@ const authenticateByTokens = () => async (dispatch: Function) => {
 
   let res = await requestUser();
 
-  // TODO: review need to be simplified
+  // TODO: review -- need to be simplified
   if (res) {
     return true;
   } else {
@@ -139,6 +140,7 @@ const authenticateByTokens = () => async (dispatch: Function) => {
       res = await requestUser();
       return res;
     } else {
+      dispatch(loginFailed(null));
       return false;
     }
   }

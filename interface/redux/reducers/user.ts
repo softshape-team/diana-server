@@ -44,7 +44,7 @@ const reducer = (state = init, action: Action) => {
         accessToken: null,
         refreshToken: null,
         user: null,
-        errs: action.payload.errs,
+        errs: action.payload.errs || null,
       };
 
     case types.LOGOUT_REQUESTED:
