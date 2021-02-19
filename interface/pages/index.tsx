@@ -10,9 +10,9 @@ import {
   NavDropdown,
 } from "react-bootstrap";
 import cn from "classnames";
+
 import { withRoot, withAuthenticate } from "../components/hoc";
 import { logoutRequest } from "../redux/actions/user";
-
 import style from "./main.module.scss";
 
 interface HomeProps {

@@ -1,5 +1,6 @@
 import { connect } from "react-redux";
 import { useEffect } from "react";
+
 import { authenticateByTokens } from "../../redux/actions/user";
 
 const withAuthenticate = (Component: any) => {

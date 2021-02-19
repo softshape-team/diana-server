@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { connect } from "react-redux";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import { registrationRequest } from "../../redux/actions/registration";
 
+import { registrationRequest } from "../../redux/actions/registration";
 import { User } from "../../tstypes";
 import { useRouter } from "next/router";
 import style from "./main.module.scss";

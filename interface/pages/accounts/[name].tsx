@@ -6,7 +6,7 @@ import cn from "classnames";
 
 import Login from "../../components/login";
 import Registration from "../../components/registration";
-import { withRoot, withAuthenticate } from "../../components/hoc";
+import { withRoot } from "../../components/hoc";
 
 interface AccountsProps {}
 
