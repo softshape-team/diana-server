@@ -108,5 +108,5 @@ const mapDispatchToProps = (dispatch: Function) => ({
 });
 
 export default withRoot(
-  withAuthenticate(connect(mapStateToProps, mapStateToProps)(Home))
+  withAuthenticate(connect(mapStateToProps, mapDispatchToProps)(Home))
 );

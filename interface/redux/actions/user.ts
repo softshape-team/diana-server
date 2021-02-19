@@ -2,7 +2,7 @@ import baseAxios from "axios";
 import { UserActionTypes, Action, Credentials } from "../../tstypes";
 
 const axios = baseAxios.create({
-  baseURL: process.env.SERVER_BASE_URL,
+  baseURL: "http://localhost:8000",
 });
 
 const types: UserActionTypes = {
