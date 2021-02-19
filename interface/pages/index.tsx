@@ -10,7 +10,7 @@ import {
   NavDropdown,
 } from "react-bootstrap";
 import cn from "classnames";
-import withAuthenticate from "../components/withAuthenticate";
+import { withRoot, withAuthenticate } from "../components/hoc";
 import { logoutRequest } from "../redux/actions/user";
 
 import style from "./main.module.scss";
@@ -107,7 +107,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   logout: (accessToken: string) => dispatch(logoutRequest(accessToken)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withAuthenticate(Home));
+export default withRoot(
+  withAuthenticate(connect(mapStateToProps, mapStateToProps(Home)))
+);

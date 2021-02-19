@@ -1,7 +1,6 @@
 import { connect } from "react-redux";
-import { authenticateByTokens } from "../../redux/actions/user";
-
 import { useEffect } from "react";
+import { authenticateByTokens } from "../../redux/actions/user";
 
 const withAuthenticate = (Component: any) => {
   interface WrapperProps {
