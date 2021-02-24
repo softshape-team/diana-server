@@ -25,15 +25,21 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         method = self.context["request"].method
-        if method in ["PUT", "PATCH"] and attrs.get("done"):
-            attrs["done_at"] = timezone.now()
+        if method in ["PUT", "PATCH"]:
+            if attrs.get("done") == True:
+                attrs["done_at"] = timezone.now()
+            else:
+                attrs["done_at"] = None
 
         elif method == "POST" and attrs.get("done"):
             raise serializers.ValidationError(
                 "You can't create an already completed task."
             )
 
-        del attrs["done"]
+        try:
+            del attrs["done"]
+        except Exception:
+            pass
 
         return attrs
 
