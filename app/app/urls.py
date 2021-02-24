@@ -17,12 +17,12 @@ urlpatterns = [
     # API Docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
-        "dev/api/schema/swagger-ui",
+        "api/dev/schema/swagger",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
     path(
-        "dev/api/schema/redoc/",
+        "api/dev/schema/redoc/",
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),

@@ -1,20 +1,14 @@
-from django.db.models import query
-from django.views import View
-from django.shortcuts import render
-
-
-from rest_framework import generics, viewsets
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from . import serializers, models
-from .permissions import OwnSubtask
-from .functions import task_pk_validator
 
 
-class Index(View):
+class Index(APIView):
     def get(self, request):
-        return render(request, "core/index.html")
+        return Response({"message": "Welcome to diana"})
 
 
 class TaskViewSet(viewsets.ModelViewSet):
