@@ -13,6 +13,7 @@ drf-spectacular = "*"
 psycopg2-binary = "*"
 django-better-admin-arrayfield = "*"
 pillow = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 pylint-django = "*"
