@@ -40,19 +40,19 @@ class TasksTest(APITestCase):
 
         self.tasks = {
             "sami": [
-                Task.objects.create(user=self.users["sami"], name="Foo"),
+                Task.objects.create(user=self.users["sami"], title="Foo"),
             ],
             "rami": [
-                Task.objects.create(user=self.users["rami"], name="Bar"),
+                Task.objects.create(user=self.users["rami"], title="Bar"),
             ],
         }
 
         self.subtasks = {
             "sami": [
-                Subtask.objects.create(task=self.tasks["sami"][0], name="Foo"),
+                Subtask.objects.create(task=self.tasks["sami"][0], title="Foo"),
             ],
             "rami": [
-                Subtask.objects.create(task=self.tasks["rami"][0], name="Foo"),
+                Subtask.objects.create(task=self.tasks["rami"][0], title="Foo"),
             ],
         }
 
@@ -98,7 +98,10 @@ class TasksTest(APITestCase):
 
         res = sclient.post(
             rvs("task-list"),
-            {"name": "Foo", "reminder": timezone.now() + timedelta(days=1)},
+            {
+                "title": "Foo",
+                "reminder": timezone.now() + timedelta(days=1),
+            },
         )
         self.assertEqual(res.status_code, 201)
         self.assertEqual(len(res.data["tags"]), 0)
@@ -106,7 +109,7 @@ class TasksTest(APITestCase):
         res = sclient.post(
             rvs("task-list"),
             {
-                "name": "Foo",
+                "title": "Foo",
                 "reminder": timezone.now() + timedelta(days=1),
                 "with_tags": [uuid.uuid4()],
             },
@@ -116,7 +119,7 @@ class TasksTest(APITestCase):
         res = sclient.post(
             rvs("task-list"),
             {
-                "name": "Foo",
+                "title": "Foo",
                 "reminder": timezone.now() + timedelta(days=1),
                 "with_tags": [self.tags["rami"][0].pk],
             },
@@ -126,7 +129,7 @@ class TasksTest(APITestCase):
         res = sclient.post(
             rvs("task-list"),
             {
-                "name": "Foo",
+                "title": "Foo",
                 "reminder": timezone.now() + timedelta(days=1),
                 "with_tags": [self.tags["sami"][0].pk],
             },
@@ -137,7 +140,7 @@ class TasksTest(APITestCase):
         res = sclient.post(
             rvs("task-list"),
             {
-                "name": "Foo",
+                "title": "Foo",
                 "reminder": timezone.now() + timedelta(days=1),
                 "with_tags": [self.tags["sami"][0].pk, self.tags["sami"][1].pk],
             },
@@ -148,7 +151,7 @@ class TasksTest(APITestCase):
         res = sclient.post(
             rvs("task-list"),
             {
-                "name": "Bar",
+                "title": "Bar",
                 "reminder": timezone.now() - timedelta(days=1),
             },
         )
@@ -157,7 +160,7 @@ class TasksTest(APITestCase):
         res = sclient.post(
             rvs("task-list"),
             {
-                "name": "Other",
+                "title": "Other",
                 "deadline": timezone.now() - timedelta(days=1),
             },
         )
@@ -166,7 +169,7 @@ class TasksTest(APITestCase):
         res = sclient.post(
             rvs("task-list"),
             {
-                "name": "Other task to be created",
+                "title": "Other task to be created",
                 "done": True,
             },
         )
@@ -195,11 +198,11 @@ class TasksTest(APITestCase):
         res = client.put(rvs("task-detail", args=[st0.pk]))
         self.assertEqual(res.status_code, 401)
 
-        res = sclient.put(rvs("task-detail", args=[st0.pk]), {"name": "New name"})
+        res = sclient.put(rvs("task-detail", args=[st0.pk]), {"title": "New name"})
         self.assertEqual(res.status_code, 200)
 
         res = sclient.put(
-            rvs("task-detail", args=[st0.pk]), {"name": "New name", "done": True}
+            rvs("task-detail", args=[st0.pk]), {"title": "New name", "done": True}
         )
         self.assertEqual(res.status_code, 200)
 
@@ -243,15 +246,16 @@ class TasksTest(APITestCase):
         res = client.post(rvs("subtask-list"))
         self.assertEqual(res.status_code, 401)
 
-        res = sclient.post(rvs("subtask-list"), {"task": st0.pk, "name": "Foo"})
+        res = sclient.post(rvs("subtask-list"), {"task": st0.pk, "title": "Foo"})
         self.assertEqual(res.status_code, 201)
 
         res = sclient.post(
-            rvs("subtask-list"), {"task": st0.pk, "name": "Something new", "done": True}
+            rvs("subtask-list"),
+            {"task": st0.pk, "title": "Something new", "done": True},
         )
         self.assertEqual(res.status_code, 400)
 
-        res = rclient.post(rvs("subtask-list"), {"task": st0.pk, "name": "Bar"})
+        res = rclient.post(rvs("subtask-list"), {"task": st0.pk, "title": "Bar"})
         self.assertEqual(res.status_code, 400)
 
         ########## List ####################
@@ -286,7 +290,7 @@ class TasksTest(APITestCase):
             rvs("subtask-detail", args=[sst0.pk]),
             {
                 "task": sst0.task.pk,
-                "name": "something",
+                "title": "something",
                 "done": False,
             },
         )
@@ -298,7 +302,7 @@ class TasksTest(APITestCase):
         ########## Retrieve again ####################
         res = sclient.get(rvs("subtask-detail", args=[sst0.pk]))
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(res.data["name"], "something")
+        self.assertEqual(res.data["title"], "something")
 
         ########## Destroy ####################
         res = client.delete(rvs("subtask-detail", args=[sst0.pk]))
@@ -471,11 +475,11 @@ class HabitTest(APITestCase):
 
         self.habits = {
             "sami": [
-                Habit.objects.create(user=self.users["sami"], name="Foo"),
-                Habit.objects.create(user=self.users["sami"], name="Bar"),
+                Habit.objects.create(user=self.users["sami"], title="Foo"),
+                Habit.objects.create(user=self.users["sami"], title="Bar"),
             ],
             "rami": [
-                Habit.objects.create(user=self.users["rami"], name="Foo"),
+                Habit.objects.create(user=self.users["rami"], title="Foo"),
             ],
         }
 
@@ -513,19 +517,19 @@ class HabitTest(APITestCase):
         res = client.post(rvs("habit-list"), {})
         self.assertEqual(res.status_code, 401)
 
-        res = sclient.post(rvs("habit-list"), {"name": "Bar"})
+        res = sclient.post(rvs("habit-list"), {"title": "Bar"})
         self.assertEqual(res.status_code, 201)
 
-        res = rclient.post(rvs("habit-list"), {"name": "Bar"})
+        res = rclient.post(rvs("habit-list"), {"title": "Bar"})
         self.assertEqual(res.status_code, 201)
 
-        res = sclient.post(rvs("habit-list"), {"name": "Something", "days": [0, 1, 2]})
+        res = sclient.post(rvs("habit-list"), {"title": "Something", "days": [0, 1, 2]})
         self.assertEqual(res.status_code, 201)
 
-        res = sclient.post(rvs("habit-list"), {"name": "Something", "days": [0, 1, 1]})
+        res = sclient.post(rvs("habit-list"), {"title": "Something", "days": [0, 1, 1]})
         self.assertEqual(res.status_code, 400)
 
-        res = sclient.post(rvs("habit-list"), {"name": "Something", "days": [0, 7]})
+        res = sclient.post(rvs("habit-list"), {"title": "Something", "days": [0, 7]})
         self.assertEqual(res.status_code, 400)
 
         ########## List again ####################
@@ -555,13 +559,13 @@ class HabitTest(APITestCase):
         res = client.put(rvs("habit-detail", args=[sh.pk]))
         self.assertEqual(res.status_code, 401)
 
-        res = sclient.put(rvs("habit-detail", args=[sh.pk]), {"name": "Orange"})
+        res = sclient.put(rvs("habit-detail", args=[sh.pk]), {"title": "Orange"})
         self.assertEqual(res.status_code, 200)
 
         res = sclient.put(
             rvs("habit-detail", args=[sh.pk]),
             {
-                "name": "Orange",
+                "title": "Orange",
                 "days": [1, 7],
             },
         )

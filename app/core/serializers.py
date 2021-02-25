@@ -63,7 +63,7 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = (
             "pk",
             "user",
-            "name",
+            "title",
             "note",
             "tags",
             "with_tags",

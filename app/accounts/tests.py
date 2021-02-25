@@ -29,26 +29,26 @@ class UserModelTest(TestCase):
         self.assertEqual(self.users["rami"].daily_progress, 100)
 
         sami0 = Task.objects.create(
-            user=self.users["sami"], name="Hello", date=timezone.now().date()
+            user=self.users["sami"], title="Hello", date=timezone.now().date()
         )
         self.assertEqual(User.objects.get(username="sami").daily_progress, 0)
 
         sami1 = Task.objects.create(
-            user=self.users["sami"], name="Hello", date=timezone.now().date()
+            user=self.users["sami"], title="Hello", date=timezone.now().date()
         )
         self.assertEqual(User.objects.get(username="sami").daily_progress, 0)
 
         sami2 = Task.objects.create(
-            user=self.users["sami"], name="Hello", date=timezone.now().date()
+            user=self.users["sami"], title="Hello", date=timezone.now().date()
         )
         self.assertEqual(User.objects.get(username="sami").daily_progress, 0)
 
         sami3 = Task.objects.create(
-            user=self.users["sami"], name="Hello", date=timezone.now().date()
+            user=self.users["sami"], title="Hello", date=timezone.now().date()
         )
         self.assertEqual(User.objects.get(username="sami").daily_progress, 0)
 
-        sami4 = Task.objects.create(user=self.users["sami"], name="Hello")
+        sami4 = Task.objects.create(user=self.users["sami"], title="Hello")
         self.assertEqual(User.objects.get(username="sami").daily_progress, 0)
 
         sami0.done_at = timezone.now()
@@ -73,7 +73,7 @@ class UserModelTest(TestCase):
         self.assertEqual(User.objects.get(username="sami").daily_progress, 100)
 
         rami0 = Task.objects.create(
-            user=self.users["rami"], name="Hello", date=timezone.now().date()
+            user=self.users["rami"], title="Hello", date=timezone.now().date()
         )
         self.assertEqual(User.objects.get(username="rami").daily_progress, 0)
         rami0.done_at = timezone.now()

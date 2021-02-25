@@ -46,29 +46,11 @@ class Color(models.IntegerChoices):
     ORANGE = 6
 
 
-class Tag(Base):
-    user = models.ForeignKey(User, related_name="tags", on_delete=models.CASCADE)
-    name = models.CharField(max_length=16)
-    color = models.IntegerField(choices=Color.choices, default=0)
-
-    def __str__(self):
-        return f"{self.name}"
-
-    class Meta:
-        ordering = ["user", "name"]
-
-        unique_together = ["user", "name"]
-
-        indexes = [
-            models.Index(fields=["user"]),
-        ]
-
-
 class Task(Base):
     user = models.ForeignKey(User, related_name="tasks", on_delete=models.CASCADE)
-    name = models.CharField(max_length=256)
+    title = models.CharField(max_length=256)
     note = models.TextField(null=True, blank=True)
-    tags = models.ManyToManyField(Tag, related_name="tasks", through="TaskTag")
+    tags = models.ManyToManyField("Tag", related_name="tasks", through="TaskTag")
     date = models.DateField(null=True, blank=True)
     reminder = models.DateTimeField(
         null=True, blank=True, validators=[FutureDateTimeValidator()]
@@ -84,7 +66,7 @@ class Task(Base):
     )
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.title}"
 
     class Meta:
         ordering = ["user"]
@@ -103,11 +85,29 @@ class Task(Base):
 
 class Subtask(Base):
     task = models.ForeignKey(Task, related_name="checklist", on_delete=models.CASCADE)
-    name = models.CharField(max_length=64)
+    title = models.CharField(max_length=64)
     done = models.BooleanField(default=False)
 
     def __str__(self):
+        return f"{self.title}"
+
+
+class Tag(Base):
+    user = models.ForeignKey(User, related_name="tags", on_delete=models.CASCADE)
+    name = models.CharField(max_length=16)
+    color = models.IntegerField(choices=Color.choices, default=0)
+
+    def __str__(self):
         return f"{self.name}"
+
+    class Meta:
+        ordering = ["user", "name"]
+
+        unique_together = ["user", "name"]
+
+        indexes = [
+            models.Index(fields=["user"]),
+        ]
 
 
 class TaskTag(Base):
@@ -136,7 +136,7 @@ class TaskTag(Base):
 
 class Habit(Base):
     user = models.ForeignKey(User, related_name="habits", on_delete=models.CASCADE)
-    name = models.CharField(max_length=24)
+    title = models.CharField(max_length=24)
     days = ArrayField(
         models.IntegerField(choices=Weekday.choices),
         blank=True,
@@ -146,7 +146,7 @@ class Habit(Base):
     time = models.TimeField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.title}"
 
     def clean(self):
         if not self.days:
