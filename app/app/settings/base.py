@@ -6,7 +6,11 @@ from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+
+# Security
 SECRET_KEY = os.getenv("SECRET_KEY")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS").split(" ")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
