@@ -10,7 +10,7 @@ services:
       - db
 
   db:
-    image: postgres
+    image: postgres:13
     container_name: db
     volumes:
       - db_data:/var/lib/postgresql/data/
