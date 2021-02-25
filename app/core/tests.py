@@ -111,27 +111,7 @@ class TasksTest(APITestCase):
             {
                 "title": "Foo",
                 "reminder": timezone.now() + timedelta(days=1),
-                "with_tags": [uuid.uuid4()],
-            },
-        )
-        self.assertEqual(res.status_code, 400)
-
-        res = sclient.post(
-            rvs("task-list"),
-            {
-                "title": "Foo",
-                "reminder": timezone.now() + timedelta(days=1),
-                "with_tags": [self.tags["rami"][0].pk],
-            },
-        )
-        self.assertEqual(res.status_code, 400)
-
-        res = sclient.post(
-            rvs("task-list"),
-            {
-                "title": "Foo",
-                "reminder": timezone.now() + timedelta(days=1),
-                "with_tags": [self.tags["sami"][0].pk],
+                "with_tag": ["First"],
             },
         )
         self.assertEqual(res.status_code, 201)
@@ -142,7 +122,7 @@ class TasksTest(APITestCase):
             {
                 "title": "Foo",
                 "reminder": timezone.now() + timedelta(days=1),
-                "with_tags": [self.tags["sami"][0].pk, self.tags["sami"][1].pk],
+                "with_tag": ["First", "Second"],
             },
         )
         self.assertEqual(res.status_code, 201)

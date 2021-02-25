@@ -4,10 +4,55 @@ from rest_framework import serializers
 from . import models
 
 
+class SubtaskSerializer(serializers.ModelSerializer):
+    def validate_task(self, task):
+        if self.context["request"].user != task.user:
+            raise serializers.ValidationError("Task does not exists")
+
+        return task
+
+    def validate_done(self, done):
+        if self.context["request"].method == "POST" and done:
+            raise serializers.ValidationError(
+                "Done field can not be set on POST request."
+            )
+
+        return done
+
+    class Meta:
+        model = models.Subtask
+        fields = "__all__"
+        read_only_fields = ("pk",)
+
+
+class TagSerializer(serializers.ModelSerializer):
+    def validate(self, attrs):
+        user = self.context["request"].user
+        try:
+            models.Tag.objects.get(user=user, name=attrs["name"])
+            raise serializers.ValidationError("You already have this tag registered.")
+        except models.Tag.DoesNotExist:
+            return attrs
+
+    class Meta:
+        model = models.Tag
+        fields = "__all__"
+        read_only_fields = ("user",)
+
+
 class TaskSerializer(serializers.ModelSerializer):
     done = serializers.BooleanField(default=False, write_only=True)
-    with_tags = serializers.ListField(
-        child=serializers.UUIDField(),
+
+    tags = TagSerializer(many=True, read_only=True)
+    with_tag = serializers.ListField(
+        child=serializers.CharField(),
+        write_only=True,
+        required=False,
+    )
+
+    checklist = SubtaskSerializer(many=True, read_only=True)
+    with_subtask = serializers.ListField(
+        child=serializers.CharField(),
         write_only=True,
         required=False,
     )
@@ -44,16 +89,19 @@ class TaskSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        tags_pks = validated_data.pop("with_tags", None)
+        user = self.context["request"].user
+
+        tags_names = validated_data.pop("with_tag", [])
+        subtasks_titles = validated_data.pop("with_subtask", [])
 
         task = models.Task.objects.create(**validated_data)
 
-        if not tags_pks:
-            return task
-
-        for tag_pk in tags_pks:
-            tag = models.Tag.objects.get(pk=tag_pk)
+        for tag_name in tags_names:
+            tag, created = models.Tag.objects.get_or_create(user=user, name=tag_name)
             models.TaskTag.objects.create(task=task, tag=tag)
+
+        for subtask_title in subtasks_titles:
+            models.Subtask.objects.create(task=task, title=subtask_title)
 
         task = models.Task.objects.get(pk=task.pk)
         return task
@@ -66,7 +114,9 @@ class TaskSerializer(serializers.ModelSerializer):
             "title",
             "note",
             "tags",
-            "with_tags",
+            "with_tag",
+            "checklist",
+            "with_subtask",
             "date",
             "reminder",
             "deadline",
@@ -75,42 +125,6 @@ class TaskSerializer(serializers.ModelSerializer):
             "done",
         )
         read_only_fields = ("pk", "user", "tags", "done_at")
-
-
-class SubtaskSerializer(serializers.ModelSerializer):
-    def validate_task(self, task):
-        if self.context["request"].user != task.user:
-            raise serializers.ValidationError("Task does not exists")
-
-        return task
-
-    def validate_done(self, done):
-        if self.context["request"].method == "POST" and done:
-            raise serializers.ValidationError(
-                "Done field can not be set on POST request."
-            )
-
-        return done
-
-    class Meta:
-        model = models.Subtask
-        fields = "__all__"
-        read_only_fields = ("pk",)
-
-
-class TagSerializer(serializers.ModelSerializer):
-    def validate(self, attrs):
-        user = self.context["request"].user
-        try:
-            models.Tag.objects.get(user=user, name=attrs["name"])
-            raise serializers.ValidationError("You already have this tag registered.")
-        except models.Tag.DoesNotExist:
-            return attrs
-
-    class Meta:
-        model = models.Tag
-        fields = "__all__"
-        read_only_fields = ("user",)
 
 
 class TaskTagSerializer(serializers.ModelSerializer):
