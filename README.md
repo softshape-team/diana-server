@@ -35,4 +35,5 @@ This is the way that our database is designed
 
 ## Other links
 
-- [Diana mobile app](https://github.com/softshape-team/diana-mobile)
+- [Diana frontend](https://github.com/softshapeorg/diana-frontend)
+- [Diana mobile app](https://github.com/softshapeorg/diana-mobile)
