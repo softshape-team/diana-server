@@ -45,14 +45,14 @@ class TaskSerializer(serializers.ModelSerializer):
 
     tags = TagSerializer(many=True, read_only=True)
     with_tag = serializers.ListField(
-        child=serializers.CharField(),
+        child=serializers.CharField(max_length=16),
         write_only=True,
         required=False,
     )
 
     checklist = SubtaskSerializer(many=True, read_only=True)
     with_subtask = serializers.ListField(
-        child=serializers.CharField(),
+        child=serializers.CharField(max_length=64),
         write_only=True,
         required=False,
     )
@@ -104,6 +104,38 @@ class TaskSerializer(serializers.ModelSerializer):
             models.Subtask.objects.create(task=task, title=subtask_title)
 
         task = models.Task.objects.get(pk=task.pk)
+        return task
+
+    def update(self, instance, validated_data):
+        # Get the user
+        user = self.context["request"].user
+
+        # Get the names of the tags and subtasks
+        tags_names = validated_data.pop("with_tag", [])
+        subtasks_titles = validated_data.pop("with_subtask", [])
+
+        # Update the task
+        task = super().update(instance, validated_data)
+
+        # Delete all the old tags if we have a list of tags
+        if tags_names:
+            models.TaskTag.objects.filter(task=task).delete()
+
+        # Delete all old subtask if we have a new list of subtask
+        if subtasks_titles:
+            models.Subtask.objects.filter(task=task).delete()
+
+        # Create the new tags and link them to the task
+        for tag_name in tags_names:
+            tag, created = models.Tag.objects.get_or_create(user=user, name=tag_name)
+            models.TaskTag.objects.create(task=task, tag=tag)
+
+        # Create the new subtasks and link them to the task
+        for subtask_title in subtasks_titles:
+            models.Subtask.objects.create(task=task, title=subtask_title)
+
+        task = models.Task.objects.get(pk=task.pk)
+
         return task
 
     class Meta:
