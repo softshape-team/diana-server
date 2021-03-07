@@ -176,19 +176,6 @@ class TaskTagSerializer(serializers.ModelSerializer):
         read_only_fields = ["pk"]
 
 
-class HabitSerializer(serializers.ModelSerializer):
-    def validate_days(self, days):
-        if len(days) != len(set(days)):
-            raise serializers.ValidationError("Days can not be repeated")
-
-        return days
-
-    class Meta:
-        model = models.Habit
-        fields = "__all__"
-        read_only_fields = ("pk", "user")
-
-
 class HabitLogSerializer(serializers.ModelSerializer):
     def validate_habit(self, habit):
         if habit.user != self.context["request"].user:
@@ -199,3 +186,18 @@ class HabitLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.HabitLog
         fields = "__all__"
+
+
+class HabitSerializer(serializers.ModelSerializer):
+    history = HabitLogSerializer(many=True, read_only=True)
+
+    def validate_days(self, days):
+        if len(days) != len(set(days)):
+            raise serializers.ValidationError("Days can not be repeated")
+
+        return days
+
+    class Meta:
+        model = models.Habit
+        fields = "__all__"
+        read_only_fields = ("pk", "user")
