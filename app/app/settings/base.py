@@ -123,17 +123,21 @@ REST_FRAMEWORK = {
 }
 
 REST_USE_JWT = True
-JWT_AUTH_COOKIE = "my-app-auth"
-
+JWT_AUTH_COOKIE = "my-access-token"
+JWT_AUTH_REFRESH_COOKIE = "my-refresh-token"
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=int(os.getenv("ACCESS_TOKEN_LIFETIME_MINUTES", 5)),
+        days=int(os.getenv("ACCESS_TOKEN_LIFETIME_DAYS", 0)),
+        hours=int(os.getenv("ACCESS_TOKEN_LIFETIME_HOURS", 0)),
+        minutes=int(os.getenv("ACCESS_TOKEN_LIFETIME_MINUTES", 0)),
+        seconds=int(os.getenv("ACCESS_TOKEN_LIFETIME_SECONDS", 0)),
     ),
     "REFRESH_TOKEN_LIFETIME": timedelta(
-        days=int(os.getenv("REFRESH_TOKEN_LIFETIME_DAYS", 1)),
+        days=int(os.getenv("REFRESH_TOKEN_LIFETIME_DAYS", 0)),
         hours=int(os.getenv("REFRESH_TOKEN_LIFETIME_HOURS", 0)),
         minutes=int(os.getenv("REFRESH_TOKEN_LIFETIME_MINUTES", 0)),
+        seconds=int(os.getenv("REFRESH_TOKEN_LIFETIME_SECONDS", 0)),
     ),
     "ROTATE_REFRESH_TOKENS": True,
 }
