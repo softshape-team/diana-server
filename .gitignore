@@ -141,3 +141,5 @@ cython_debug/
 # Custome
 .vscode
 /app/.env
+/app/mediafiles
+/app/staticfiles
