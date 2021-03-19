@@ -123,8 +123,8 @@ REST_FRAMEWORK = {
 }
 
 REST_USE_JWT = True
-JWT_AUTH_COOKIE = "my-access-token"
-JWT_AUTH_REFRESH_COOKIE = "my-refresh-token"
+JWT_AUTH_COOKIE = "access-token"
+JWT_AUTH_REFRESH_COOKIE = "refresh-token"
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
