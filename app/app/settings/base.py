@@ -9,6 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Security
 SECRET_KEY = os.getenv("SECRET_KEY")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(" ")
+
+# CORS
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(" ")
+CORS_ALLOW_CREDENTIALS = bool(os.environ.get("CORS_ALLOW_CREDENTIALS", False))
 
 INSTALLED_APPS = [
     "django.contrib.admin",

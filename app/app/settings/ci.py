@@ -1,3 +1,5 @@
 from .base import *
 
-DEBUG = os.getenv("DEBUG", 1)
+DEBUG = True
+
+CORS_ALLOWED_ORIGINS = []
