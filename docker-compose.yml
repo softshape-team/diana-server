@@ -3,6 +3,7 @@ version: "3"
 services:
   web:
     build: ./app
+    image: diana-backend-web
     container_name: web
     volumes:
       - ./app:/src/app
