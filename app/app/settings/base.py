@@ -44,7 +44,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "app.middlewares.UpdateAPILoginResponse",
 ]
 
 ROOT_URLCONF = "app.urls"
@@ -125,6 +124,11 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ],
+}
+
+# REST Auth framework
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "accounts.serializers.UserSerializer",
 }
 
 REST_USE_JWT = True

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
 from rest_framework import serializers
+from dj_rest_auth.serializers import UserDetailsSerializer as BaseUserDetailsSerializer
 
 
 User = get_user_model()
@@ -55,3 +56,9 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name": {"required": True},
             "last_name": {"required": True},
         }
+
+
+class UserDetailSerializer(BaseUserDetailsSerializer):
+    class Meta:
+        model = User
+        fields = "__all__"
