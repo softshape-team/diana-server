@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from . import models
+from .functions import add_tags_and_subtask_to_task
 
 
 class SubtaskSerializer(serializers.ModelSerializer):
@@ -90,53 +91,19 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
+        tags_names = validated_data.pop("with_tag", None)
+        subtasks_titles = validated_data.pop("with_subtask", None)
+        task = super().create(validated_data)
 
-        tags_names = validated_data.pop("with_tag", [])
-        subtasks_titles = validated_data.pop("with_subtask", [])
-
-        task = models.Task.objects.create(**validated_data)
-
-        for tag_name in tags_names:
-            tag, created = models.Tag.objects.get_or_create(user=user, name=tag_name)
-            models.TaskTag.objects.create(task=task, tag=tag)
-
-        for subtask_title in subtasks_titles:
-            models.Subtask.objects.create(task=task, title=subtask_title)
-
-        task = models.Task.objects.get(pk=task.pk)
-        return task
+        return add_tags_and_subtask_to_task(user, task, tags_names, subtasks_titles)
 
     def update(self, instance, validated_data):
-        # Get the user
         user = self.context["request"].user
-
-        # Get the names of the tags and subtasks
-        tags_names = validated_data.pop("with_tag", [])
-        subtasks_titles = validated_data.pop("with_subtask", [])
-
-        # Update the task
+        tags_names = validated_data.pop("with_tag", None)
+        subtasks_titles = validated_data.pop("with_subtask", None)
         task = super().update(instance, validated_data)
 
-        # Delete all the old tags if we have a list of tags
-        if tags_names:
-            models.TaskTag.objects.filter(task=task).delete()
-
-        # Delete all old subtask if we have a new list of subtask
-        if subtasks_titles:
-            models.Subtask.objects.filter(task=task).delete()
-
-        # Create the new tags and link them to the task
-        for tag_name in tags_names:
-            tag, created = models.Tag.objects.get_or_create(user=user, name=tag_name)
-            models.TaskTag.objects.create(task=task, tag=tag)
-
-        # Create the new subtasks and link them to the task
-        for subtask_title in subtasks_titles:
-            models.Subtask.objects.create(task=task, title=subtask_title)
-
-        task = models.Task.objects.get(pk=task.pk)
-
-        return task
+        return add_tags_and_subtask_to_task(user, task, tags_names, subtasks_titles)
 
     class Meta:
         model = models.Task

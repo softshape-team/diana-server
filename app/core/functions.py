@@ -1,6 +1,7 @@
 from django.utils import timezone
 from django.urls import reverse
-from .models import Task
+
+from . import models
 
 
 def rvs(name, *, args=None, kwargs=None, params: dict = None):
@@ -21,7 +22,7 @@ def task_pk_validator(request, task_pk):
     if not task_pk:
         return False
 
-    task = Task.objects.filter(pk=task_pk).first()
+    task = models.Task.objects.filter(pk=task_pk).first()
     if not task:
         return False
 
@@ -36,7 +37,7 @@ def update_daily_progress(user):
     Update user's daily progress
     """
 
-    today_tasks = Task.objects.filter(user=user, date=timezone.now().date())
+    today_tasks = models.Task.objects.filter(user=user, date=timezone.now().date())
     if not today_tasks.count():
         return
 
@@ -47,3 +48,20 @@ def update_daily_progress(user):
     user.save()
 
     return user.daily_progress
+
+
+def add_tags_and_subtask_to_task(user, task, tags_names, subtasks_titles):
+    if tags_names is not None:
+        models.TaskTag.objects.filter(task=task).delete()
+        for name in tags_names:
+            tag, created = models.Tag.objects.get_or_create(user=user, name=name)
+            models.TaskTag.objects.create(task=task, tag=tag)
+
+    if subtasks_titles is not None:
+        models.Subtask.objects.filter(task=task).delete()
+        for title in subtasks_titles:
+            subtask, created = models.Subtask.objects.get_or_create(
+                task=task, title=title
+            )
+
+    return models.Task.objects.get(pk=task.pk)
